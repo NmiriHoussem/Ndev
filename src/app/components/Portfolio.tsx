@@ -1,65 +1,31 @@
 import { motion, useMotionValue, useTransform } from 'motion/react';
 import { Badge } from './ui/badge';
 import { ExternalLink, Star, TrendingUp, Users } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
+import { Folder } from 'lucide-react';
 
-const projects = [
-  {
-    title: 'E-Commerce Platform',
-    category: 'Web Development',
-    description: 'A full-featured online store with payment integration and inventory management.',
-    image: 'https://images.unsplash.com/photo-1676799910963-3932099f67e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjB3ZWIlMjBkZXNpZ258ZW58MXx8fHwxNzY2OTY4NTkwfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-    tags: ['React', 'Node.js', 'Stripe'],
-    gradient: 'from-blue-500 to-cyan-500',
-    metrics: { users: '10k+', rating: '4.9', growth: '+250%' },
-  },
-  {
-    title: 'Healthcare SaaS',
-    category: 'SaaS Products',
-    description: 'Patient management system for healthcare providers with telemedicine features.',
-    image: 'https://images.unsplash.com/photo-1742997734865-71d10c491be5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzYWFzJTIwZGFzaGJvYXJkfGVufDF8fHx8MTc2NzAzMTgwOXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-    tags: ['SaaS', 'Cloud', 'Security'],
-    gradient: 'from-purple-500 to-pink-500',
-    metrics: { users: '5k+', rating: '5.0', growth: '+180%' },
-  },
-  {
-    title: 'Mobile Banking App',
-    category: 'Mobile Development',
-    description: 'Secure banking app with biometric authentication and real-time transactions.',
-    image: 'https://images.unsplash.com/photo-1633250391894-397930e3f5f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2JpbGUlMjBhcHAlMjBkZXZlbG9wbWVudHxlbnwxfHx8fDE3NjY5NTI2NDB8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-    tags: ['React Native', 'Security', 'API'],
-    gradient: 'from-green-500 to-emerald-500',
-    metrics: { users: '50k+', rating: '4.8', growth: '+320%' },
-  },
-  {
-    title: 'Brand Identity Design',
-    category: 'Branding & Design',
-    description: 'Complete brand identity including logo, colors, and design system.',
-    image: 'https://images.unsplash.com/photo-1634671495197-fb9ec3230ef5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjcmVhdGl2ZSUyMGJyYW5kaW5nJTIwZGVzaWdufGVufDF8fHx8MTc2Njk2MTY0MXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-    tags: ['Branding', 'UI/UX', 'Design System'],
-    gradient: 'from-yellow-500 to-orange-500',
-    metrics: { users: '2k+', rating: '5.0', growth: '+200%' },
-  },
-  {
-    title: 'Interactive Learning Platform',
-    category: 'E-Learning',
-    description: 'Engaging educational platform with gamification and progress tracking.',
-    image: 'https://images.unsplash.com/photo-1565688695721-2b6f5a880a15?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxlbGVhcm5pbmclMjBvbmxpbmUlMjBlZHVjYXRpb258ZW58MXx8fHwxNzY3MDMxODA4fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-    tags: ['Education', 'Interactive', 'Analytics'],
-    gradient: 'from-indigo-500 to-purple-500',
-    metrics: { users: '15k+', rating: '4.9', growth: '+280%' },
-  },
-  {
-    title: 'Adventure RPG Game',
-    category: 'Game Development',
-    description: 'Cross-platform adventure game with stunning graphics and immersive gameplay.',
-    image: 'https://images.unsplash.com/photo-1611138290962-2c550ffd4002?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnYW1pbmclMjBjb250cm9sbGVyfGVufDF8fHx8MTc2Njk2NTcxM3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-    tags: ['Unity', 'Multiplayer', '3D'],
-    gradient: 'from-red-500 to-pink-500',
-    metrics: { users: '100k+', rating: '4.7', growth: '+400%' },
-  },
-];
+const projectId = "mdauklijxlvxpcooytai";
+const publicAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kYXVrbGlqeGx2eHBjb295dGFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5ODY1MzIsImV4cCI6MjA4MzU2MjUzMn0.cvk8mjS0e-iGlYXTiEbjLJrecnDTWAOR2Pr2RbIUSqI";
+
+const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-a2e14eff`;
+
+interface Project {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  image: string;
+  tags: string[];
+  gradient: string;
+  metrics: {
+    users: string;
+    rating: string;
+    growth: string;
+  };
+  link?: string;
+  featured?: boolean;
+}
 
 function ProjectCard({ project, index }: any) {
   const [isHovered, setIsHovered] = useState(false);
@@ -202,6 +168,49 @@ function ProjectCard({ project, index }: any) {
 }
 
 export function Portfolio() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        console.log('Fetching projects from:', `${API_BASE}/projects`);
+        
+        const response = await fetch(`${API_BASE}/projects`, {
+          headers: {
+            'Authorization': `Bearer ${publicAnonKey}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Projects response:', data);
+        
+        if (data.success && data.projects && data.projects.length > 0) {
+          // Projects are returned directly, not wrapped in {key, value} format
+          const projectsList = data.projects.filter((project: any) => project && project.id && project.title);
+          console.log('Filtered projects for display:', projectsList);
+          setProjects(projectsList);
+        } else {
+          // Use default projects if none exist in database
+          console.log('No projects found, using empty state');
+          setProjects([]);
+        }
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+        // Keep empty array on error
+        setProjects([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
   return (
     <section id="portfolio" className="py-32 relative overflow-hidden">
       {/* Creative background */}
@@ -303,9 +312,45 @@ export function Portfolio() {
 
         {/* Projects grid - Creative masonry-style */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {projects.map((project, idx) => (
-            <ProjectCard key={project.title} project={project} index={idx} />
-          ))}
+          {loading ? (
+            // Loading state
+            <div className="col-span-full text-center py-20">
+              <motion.div
+                className="inline-block w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              />
+              <p className="mt-4 text-gray-600">Loading projects...</p>
+            </div>
+          ) : projects.length === 0 ? (
+            // Empty state
+            <div className="col-span-full text-center py-20">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="max-w-md mx-auto"
+              >
+                <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-purple-100 to-blue-100 rounded-full flex items-center justify-center">
+                  <Folder className="w-12 h-12 text-purple-600" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">No Projects Yet</h3>
+                <p className="text-gray-600 mb-6">
+                  Projects will appear here once added through the admin panel.
+                </p>
+                <a
+                  href="/admin"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:shadow-lg transition-all"
+                >
+                  Go to Admin Panel
+                  <ArrowRight size={16} />
+                </a>
+              </motion.div>
+            </div>
+          ) : (
+            projects.map((project, idx) => (
+              <ProjectCard key={project.title} project={project} index={idx} />
+            ))
+          )}
         </div>
 
         {/* CTA with creative design */}

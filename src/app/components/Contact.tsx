@@ -10,8 +10,8 @@ const contactInfo = [
   {
     icon: Mail,
     title: 'Email',
-    value: 'hello@ndevdigital.com',
-    link: 'mailto:hello@ndevdigital.com',
+    value: 'contact@ndev.digital',
+    link: 'mailto:contact@ndev.digital',
     gradient: 'from-blue-500 to-cyan-500',
   },
   {
@@ -24,7 +24,7 @@ const contactInfo = [
   {
     icon: MapPin,
     title: 'Location',
-    value: 'Making Apps and Games Worldwide',
+    value: 'Centre Urbain Nord Tunis',
     link: null,
     gradient: 'from-green-500 to-emerald-500',
   },
@@ -175,23 +175,7 @@ export function Contact() {
                   })}
                 </div>
 
-                {/* Quick Info */}
-                <motion.div
-                  className="mt-8 p-6 rounded-2xl bg-gradient-to-br from-purple-500 via-blue-500 to-cyan-500 text-white relative overflow-hidden"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.4 }}
-                >
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
-                  <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
-                  
-                  <div className="relative z-10">
-                    <Calendar className="mb-3" size={32} />
-                    <h4 className="text-xl mb-2">Schedule a Call</h4>
-                    <p className="text-sm opacity-90">Book a free consultation to discuss your project</p>
-                  </div>
-                </motion.div>
+                {/* Removed "Schedule a Call" section */}
               </div>
             </div>
           </motion.div>

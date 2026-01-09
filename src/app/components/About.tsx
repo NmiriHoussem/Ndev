@@ -241,71 +241,7 @@ export function About() {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <div className="relative">
-            {/* Background card with tilt effect */}
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-br from-purple-100 via-pink-50 to-blue-100 rounded-[3rem] transform rotate-2"
-              whileHover={{ rotate: -1 }}
-              transition={{ duration: 0.3 }}
-            ></motion.div>
-
-            {/* Main card */}
-            <div className="relative bg-white/90 backdrop-blur-2xl rounded-[3rem] p-12 md:p-16 border-2 border-white shadow-2xl">
-              <div className="flex flex-col lg:flex-row gap-12 items-center">
-                {/* Icon grid */}
-                <motion.div 
-                  className="grid grid-cols-2 gap-4 lg:w-1/3"
-                  initial={{ opacity: 0, x: -40 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8 }}
-                >
-                  {[Rocket, Star, Heart, Zap].map((Icon, idx) => (
-                    <motion.div
-                      key={idx}
-                      className="w-24 h-24 rounded-2xl bg-gradient-to-br from-purple-500 via-pink-500 to-blue-500 flex items-center justify-center"
-                      whileHover={{ scale: 1.2, rotate: 360 }}
-                      transition={{ duration: 0.6 }}
-                    >
-                      <Icon className="text-white" size={40} />
-                    </motion.div>
-                  ))}
-                </motion.div>
-
-                {/* Content */}
-                <div className="lg:w-2/3">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
-                  >
-                    <h3 className="text-4xl md:text-5xl mb-6">
-                      <span className="bg-gradient-to-r from-purple-600 via-pink-500 to-blue-600 bg-clip-text text-transparent">
-                        Making Apps and Games
-                      </span>
-                    </h3>
-                    <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
-                      <p>
-                        Hey there! We're <strong className="text-purple-600">NdevDigital</strong>, 
-                        and we've been creating digital magic since 2020.
-                      </p>
-                      <p>
-                        Whether you need a <span className="text-blue-600">stunning website</span>, 
-                        a <span className="text-purple-600">powerful SaaS platform</span>, 
-                        <span className="text-pink-600"> engaging e-learning content</span>, or 
-                        an <span className="text-cyan-600">immersive game</span>—we've got you covered!
-                      </p>
-                      <p>
-                        We don't just code and design—we create <strong>experiences that users love</strong>. 
-                        Let's build something awesome together!
-                      </p>
-                    </div>
-                  </motion.div>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Removed "Making Apps and Games" card section */}
         </motion.div>
       </div>
     </section>
