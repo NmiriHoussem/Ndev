@@ -40,25 +40,32 @@ export function Footer() {
         
         if (response.ok) {
           const text = await response.text();
-          console.log('White logo response:', text); // Debug log
-          if (text && text.trim() && text !== 'null') {
-            try {
-              // Try to parse as JSON first
-              const logoData = JSON.parse(text);
-              if (logoData && typeof logoData === 'string' && logoData.startsWith('data:image')) {
-                setLogoWhite(logoData);
-                console.log('White logo loaded successfully');
-              }
-            } catch (e) {
-              // If not JSON, check if it's a direct base64 string
-              if (text.startsWith('data:image')) {
-                setLogoWhite(text);
-                console.log('White logo loaded successfully (direct)');
-              } else {
-                console.log('No valid white logo in database yet, using default');
-              }
+          console.log('White logo response raw:', text);
+          
+          // Check if response is empty or null
+          if (!text || text === 'null' || text.trim() === '') {
+            console.log('No white logo in database yet, using default');
+            return;
+          }
+          
+          // Try to parse and use the logo
+          try {
+            const logoData = JSON.parse(text);
+            if (logoData && typeof logoData === 'string' && logoData.startsWith('data:image')) {
+              setLogoWhite(logoData);
+              console.log('White logo loaded successfully from JSON');
+            }
+          } catch (e) {
+            // If not JSON, check if it's a direct base64 string
+            if (text.startsWith('data:image')) {
+              setLogoWhite(text);
+              console.log('White logo loaded successfully (direct string)');
+            } else {
+              console.log('Invalid white logo format:', text.substring(0, 50));
             }
           }
+        } else {
+          console.log('Failed to fetch white logo, status:', response.status);
         }
       } catch (err) {
         console.error('Failed to load white logo:', err);
