@@ -492,6 +492,59 @@ app.post("/make-server-a2e14eff/clients/seed", async (c) => {
   }
 });
 
+// KV Store endpoints for general settings (logos, etc.)
+// Get a value from KV store
+app.get("/make-server-a2e14eff/kv/get", async (c) => {
+  try {
+    const key = c.req.query('key');
+    if (!key) {
+      return c.json({ success: false, error: 'Key is required' }, 400);
+    }
+    
+    const value = await kv.get(key);
+    return c.json(value);
+  } catch (error) {
+    console.error('Error getting KV value:', error);
+    return c.json({ success: false, error: String(error) }, 500);
+  }
+});
+
+// Set a value in KV store
+app.post("/make-server-a2e14eff/kv/set", async (c) => {
+  try {
+    const body = await c.req.json();
+    const { key, value } = body;
+    
+    if (!key) {
+      return c.json({ success: false, error: 'Key is required' }, 400);
+    }
+    
+    await kv.set(key, value);
+    return c.json({ success: true });
+  } catch (error) {
+    console.error('Error setting KV value:', error);
+    return c.json({ success: false, error: String(error) }, 500);
+  }
+});
+
+// Delete a value from KV store
+app.post("/make-server-a2e14eff/kv/delete", async (c) => {
+  try {
+    const body = await c.req.json();
+    const { key } = body;
+    
+    if (!key) {
+      return c.json({ success: false, error: 'Key is required' }, 400);
+    }
+    
+    await kv.del(key);
+    return c.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting KV value:', error);
+    return c.json({ success: false, error: String(error) }, 500);
+  }
+});
+
 // Social Media CRUD endpoints
 // Get all social media links
 app.get("/make-server-a2e14eff/social-media", async (c) => {
