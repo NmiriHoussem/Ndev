@@ -61,6 +61,8 @@ export function Admin() {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [currentLogo, setCurrentLogo] = useState<string | null>(null);
   const [logoType, setLogoType] = useState<'png' | 'svg' | null>(null);
+  const [logoWhitePreview, setLogoWhitePreview] = useState<string | null>(null);
+  const [currentLogoWhite, setCurrentLogoWhite] = useState<string | null>(null);
   
   // Sections state
   const [sections, setSections] = useState<Section[]>([]);
@@ -113,16 +115,44 @@ export function Admin() {
       setIsAuthenticated(true);
       setEmail(ADMIN_EMAIL);
       loadData();
-    }
-
-    // Load logo from localStorage
-    const savedLogo = localStorage.getItem('siteLogo');
-    const savedLogoType = localStorage.getItem('siteLogoType') as 'png' | 'svg' | null;
-    if (savedLogo) {
-      setCurrentLogo(savedLogo);
-      setLogoType(savedLogoType);
+      loadLogos();
     }
   }, []);
+
+  const loadLogos = async () => {
+    try {
+      // Load colored logo
+      const logoResponse = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server-a2e14eff/kv/get?key=siteLogo`, {
+        headers: {
+          'Authorization': `Bearer ${publicAnonKey}`,
+        }
+      });
+      
+      if (logoResponse.ok) {
+        const logoData = await logoResponse.json();
+        if (logoData?.data) {
+          setCurrentLogo(logoData.data);
+          setLogoType(logoData.type || 'png');
+        }
+      }
+
+      // Load white logo
+      const whiteLogoResponse = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server-a2e14eff/kv/get?key=siteLogoWhite`, {
+        headers: {
+          'Authorization': `Bearer ${publicAnonKey}`,
+        }
+      });
+      
+      if (whiteLogoResponse.ok) {
+        const whiteLogoData = await whiteLogoResponse.json();
+        if (whiteLogoData) {
+          setCurrentLogoWhite(whiteLogoData);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to load logos:', err);
+    }
+  };
 
   const loadData = async () => {
     setLoading(true);
@@ -244,28 +274,147 @@ export function Admin() {
     reader.readAsDataURL(file);
   };
 
-  const handleSaveLogo = () => {
+  const handleSaveLogo = async () => {
     if (!logoPreview) return;
+    
+    setLoading(true);
+    try {
+      const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server-a2e14eff/kv/set`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${publicAnonKey}`,
+        },
+        body: JSON.stringify({
+          key: 'siteLogo',
+          value: { data: logoPreview, type: logoType || 'png' }
+        })
+      });
 
-    localStorage.setItem('siteLogo', logoPreview);
-    localStorage.setItem('siteLogoType', logoType || 'png');
-    setCurrentLogo(logoPreview);
-    showSuccess();
+      if (!response.ok) throw new Error('Failed to save logo');
+
+      setCurrentLogo(logoPreview);
+      showSuccess();
+    } catch (err) {
+      setError('Failed to save logo');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDeleteLogo = () => {
+  const handleDeleteLogo = async () => {
     if (window.confirm('Are you sure you want to delete the current logo?')) {
-      localStorage.removeItem('siteLogo');
-      localStorage.removeItem('siteLogoType');
-      setCurrentLogo(null);
-      setLogoPreview(null);
-      setLogoType(null);
+      setLoading(true);
+      try {
+        const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server-a2e14eff/kv/delete`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${publicAnonKey}`,
+          },
+          body: JSON.stringify({ key: 'siteLogo' })
+        });
+
+        if (!response.ok) throw new Error('Failed to delete logo');
+
+        setCurrentLogo(null);
+        setLogoPreview(null);
+        setLogoType(null);
+        showSuccess();
+      } catch (err) {
+        setError('Failed to delete logo');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
   const handleClearPreview = () => {
     setLogoPreview(null);
     setLogoType(null);
+  };
+
+  const handleWhiteLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const validTypes = ['image/png', 'image/svg+xml'];
+    if (!validTypes.includes(file.type)) {
+      setError('Please upload a PNG or SVG file only.');
+      return;
+    }
+
+    setError('');
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      const result = event.target?.result as string;
+      setLogoWhitePreview(result);
+    };
+
+    reader.readAsDataURL(file);
+  };
+
+  const handleSaveWhiteLogo = async () => {
+    if (!logoWhitePreview) return;
+
+    setLoading(true);
+    try {
+      const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server-a2e14eff/kv/set`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${publicAnonKey}`,
+        },
+        body: JSON.stringify({
+          key: 'siteLogoWhite',
+          value: logoWhitePreview
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to save white logo');
+
+      setCurrentLogoWhite(logoWhitePreview);
+      showSuccess();
+    } catch (err) {
+      setError('Failed to save white logo');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteWhiteLogo = async () => {
+    if (window.confirm('Are you sure you want to delete the white logo?')) {
+      setLoading(true);
+      try {
+        const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server-a2e14eff/kv/delete`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${publicAnonKey}`,
+          },
+          body: JSON.stringify({ key: 'siteLogoWhite' })
+        });
+
+        if (!response.ok) throw new Error('Failed to delete white logo');
+
+        setCurrentLogoWhite(null);
+        setLogoWhitePreview(null);
+        showSuccess();
+      } catch (err) {
+        setError('Failed to delete white logo');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleClearWhitePreview = () => {
+    setLogoWhitePreview(null);
   };
 
   // Section Management
@@ -909,7 +1058,10 @@ export function Admin() {
               Logo Management
             </h2>
 
-            <div className="grid md:grid-cols-2 gap-6">
+            {/* Colored Logo (for Light Backgrounds) */}
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold text-white mb-4">Colored Logo (for Light Backgrounds)</h3>
+              <div className="grid md:grid-cols-2 gap-6">
               {/* Upload Section */}
               <div className="space-y-4">
                 <div>
@@ -988,6 +1140,93 @@ export function Admin() {
                       <p className="text-gray-500 text-sm">No logo uploaded yet</p>
                     </div>
                   )}
+                </div>
+              </div>
+            </div>
+            </div>
+
+            {/* White Logo (for Dark/Colored Backgrounds) */}
+            <div>
+              <h3 className="text-lg font-semibold text-white mb-4">White Logo (for Dark/Colored Backgrounds)</h3>
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Upload Section */}
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-3">
+                      Upload White Logo (PNG or SVG)
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="file"
+                        accept=".png,.svg,image/png,image/svg+xml"
+                        onChange={handleWhiteLogoUpload}
+                        className="hidden"
+                        id="logo-white-upload"
+                      />
+                      <label
+                        htmlFor="logo-white-upload"
+                        className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-white/20 rounded-lg cursor-pointer hover:border-purple-500/50 transition-colors bg-white/5"
+                      >
+                        <Upload className="text-purple-400 mb-2" size={32} />
+                        <span className="text-gray-300 text-sm">Click to upload</span>
+                        <span className="text-gray-500 text-xs mt-1">PNG or SVG only</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Preview New White Logo */}
+                  {logoWhitePreview && (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-medium text-gray-300">New White Logo Preview:</p>
+                        <button
+                          onClick={handleClearWhitePreview}
+                          className="text-gray-400 hover:text-red-400 transition-colors"
+                        >
+                          <X size={20} />
+                        </button>
+                      </div>
+                      <div className="bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg p-4 flex items-center justify-center">
+                        <img src={logoWhitePreview} alt="White logo preview" className="max-h-24 max-w-full object-contain" />
+                      </div>
+                      <Button
+                        onClick={handleSaveWhiteLogo}
+                        className="w-full bg-gradient-to-r from-[#5865F2] to-[#8B5CF6] hover:shadow-lg hover:shadow-purple-500/50 text-white"
+                      >
+                        <Save size={20} className="mr-2" />
+                        Save White Logo
+                      </Button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Current White Logo Section */}
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm font-medium text-gray-300 mb-3">Current White Logo:</p>
+                    {currentLogoWhite ? (
+                      <div className="space-y-3">
+                        <div className="bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg p-4 flex items-center justify-center min-h-[160px]">
+                          <img src={currentLogoWhite} alt="Current white logo" className="max-h-32 max-w-full object-contain" />
+                        </div>
+                        <div className="flex items-center justify-end text-sm">
+                          <Button
+                            onClick={handleDeleteWhiteLogo}
+                            variant="outline"
+                            className="border-red-500/50 text-red-400 hover:bg-red-500/10"
+                            size="sm"
+                          >
+                            Delete White Logo
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="bg-white/5 rounded-lg p-8 flex flex-col items-center justify-center min-h-[160px] border border-dashed border-white/10">
+                        <ImageIcon className="text-gray-600 mb-2" size={32} />
+                        <p className="text-gray-500 text-sm">No white logo uploaded yet</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
