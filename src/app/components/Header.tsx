@@ -31,14 +31,23 @@ export function Header() {
         
         if (response.ok) {
           const text = await response.text();
-          if (text && text.trim()) {
+          console.log('Logo response:', text); // Debug log
+          if (text && text.trim() && text !== 'null') {
             try {
+              // Try to parse as JSON first
               const logoData = JSON.parse(text);
-              if (logoData && typeof logoData === 'string') {
+              if (logoData && typeof logoData === 'string' && logoData.startsWith('data:image')) {
                 setLogo(logoData);
+                console.log('Logo loaded successfully');
               }
             } catch (e) {
-              console.log('No logo in database yet, using default');
+              // If not JSON, check if it's a direct base64 string
+              if (text.startsWith('data:image')) {
+                setLogo(text);
+                console.log('Logo loaded successfully (direct)');
+              } else {
+                console.log('No valid logo in database yet, using default');
+              }
             }
           }
         }

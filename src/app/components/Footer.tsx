@@ -40,14 +40,23 @@ export function Footer() {
         
         if (response.ok) {
           const text = await response.text();
-          if (text && text.trim()) {
+          console.log('White logo response:', text); // Debug log
+          if (text && text.trim() && text !== 'null') {
             try {
+              // Try to parse as JSON first
               const logoData = JSON.parse(text);
-              if (logoData && typeof logoData === 'string') {
+              if (logoData && typeof logoData === 'string' && logoData.startsWith('data:image')) {
                 setLogoWhite(logoData);
+                console.log('White logo loaded successfully');
               }
             } catch (e) {
-              console.log('No white logo in database yet, using default');
+              // If not JSON, check if it's a direct base64 string
+              if (text.startsWith('data:image')) {
+                setLogoWhite(text);
+                console.log('White logo loaded successfully (direct)');
+              } else {
+                console.log('No valid white logo in database yet, using default');
+              }
             }
           }
         }
