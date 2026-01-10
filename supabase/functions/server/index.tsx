@@ -1,8 +1,44 @@
 import { Hono } from "npm:hono";
 import { cors } from "npm:hono/cors";
 import { logger } from "npm:hono/logger";
+import { createClient } from 'npm:@supabase/supabase-js@2';
 import * as kv from "./kv_store.tsx";
 const app = new Hono();
+
+// Initialize Supabase client for storage
+const supabase = createClient(
+  Deno.env.get('SUPABASE_URL')!,
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+);
+
+// Create storage buckets on startup
+const BUCKET_NAME = 'make-a2e14eff-projects';
+
+async function initializeStorage() {
+  try {
+    const { data: buckets } = await supabase.storage.listBuckets();
+    const bucketExists = buckets?.some(bucket => bucket.name === BUCKET_NAME);
+    
+    if (!bucketExists) {
+      const { error } = await supabase.storage.createBucket(BUCKET_NAME, {
+        public: false,
+        fileSizeLimit: 5242880, // 5MB
+        allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+      });
+      
+      if (error) {
+        console.error('Error creating storage bucket:', error);
+      } else {
+        console.log(`Storage bucket "${BUCKET_NAME}" created successfully`);
+      }
+    }
+  } catch (error) {
+    console.error('Error initializing storage:', error);
+  }
+}
+
+// Initialize storage
+initializeStorage();
 
 // Enable logger
 app.use('*', logger(console.log));
@@ -227,6 +263,84 @@ app.post("/make-server-a2e14eff/projects/seed", async (c) => {
     });
   } catch (error) {
     console.error("Error seeding projects:", error);
+    return c.json({ success: false, error: String(error) }, 500);
+  }
+});
+
+// Image upload endpoint for projects
+app.post("/make-server-a2e14eff/upload-image", async (c) => {
+  try {
+    const formData = await c.req.formData();
+    const file = formData.get('file') as File;
+    
+    if (!file) {
+      return c.json({ success: false, error: 'No file provided' }, 400);
+    }
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowedTypes.includes(file.type)) {
+      return c.json({ 
+        success: false, 
+        error: 'Invalid file type. Only JPEG, PNG, WebP, and GIF are allowed.' 
+      }, 400);
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5242880) {
+      return c.json({ 
+        success: false, 
+        error: 'File too large. Maximum size is 5MB.' 
+      }, 400);
+    }
+
+    // Generate unique filename
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${crypto.randomUUID()}.${fileExt}`;
+    const filePath = `projects/${fileName}`;
+
+    // Convert file to ArrayBuffer
+    const arrayBuffer = await file.arrayBuffer();
+    const fileBuffer = new Uint8Array(arrayBuffer);
+
+    // Upload to Supabase Storage
+    const { error: uploadError } = await supabase.storage
+      .from(BUCKET_NAME)
+      .upload(filePath, fileBuffer, {
+        contentType: file.type,
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (uploadError) {
+      console.error('Error uploading file to storage:', uploadError);
+      return c.json({ 
+        success: false, 
+        error: `Upload failed: ${uploadError.message}` 
+      }, 500);
+    }
+
+    // Get signed URL (valid for 10 years)
+    const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+      .from(BUCKET_NAME)
+      .createSignedUrl(filePath, 315360000); // 10 years in seconds
+
+    if (signedUrlError) {
+      console.error('Error creating signed URL:', signedUrlError);
+      return c.json({ 
+        success: false, 
+        error: `Failed to create signed URL: ${signedUrlError.message}` 
+      }, 500);
+    }
+
+    console.log(`Successfully uploaded image: ${filePath}`);
+    return c.json({ 
+      success: true, 
+      url: signedUrlData.signedUrl,
+      path: filePath 
+    });
+  } catch (error) {
+    console.error('Error in image upload endpoint:', error);
     return c.json({ success: false, error: String(error) }, 500);
   }
 });

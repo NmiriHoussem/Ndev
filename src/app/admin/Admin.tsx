@@ -103,6 +103,7 @@ export function Admin() {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     // Check authentication
@@ -526,6 +527,56 @@ export function Admin() {
     setShowProjectForm(false);
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!validTypes.includes(file.type)) {
+      setError('Please upload a JPEG, PNG, WebP, or GIF image only.');
+      return;
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5242880) {
+      setError('Image file too large. Maximum size is 5MB.');
+      return;
+    }
+
+    setUploadingImage(true);
+    setError('');
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch(`${API_BASE}/upload-image`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${publicAnonKey}`
+        },
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        setError(data.error || 'Failed to upload image');
+        return;
+      }
+
+      // Update project form with the uploaded image URL
+      setProjectForm({ ...projectForm, image: data.url });
+      console.log('Image uploaded successfully:', data.url);
+    } catch (error) {
+      setError('Failed to upload image');
+      console.error('Error uploading image:', error);
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
   // Client Management
   const handleAddClient = async () => {
     if (!clientForm.name || !clientForm.logo) {
@@ -634,6 +685,56 @@ export function Admin() {
       logo: '',
     });
     setShowClientForm(false);
+  };
+
+  const handleClientLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml'];
+    if (!validTypes.includes(file.type)) {
+      setError('Please upload a JPEG, PNG, WebP, GIF, or SVG image only.');
+      return;
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5242880) {
+      setError('Logo file too large. Maximum size is 5MB.');
+      return;
+    }
+
+    setUploadingImage(true);
+    setError('');
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch(`${API_BASE}/upload-image`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${publicAnonKey}`
+        },
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        setError(data.error || 'Failed to upload logo');
+        return;
+      }
+
+      // Update client form with the uploaded logo URL
+      setClientForm({ ...clientForm, logo: data.url });
+      console.log('Logo uploaded successfully:', data.url);
+    } catch (error) {
+      setError('Failed to upload logo');
+      console.error('Error uploading logo:', error);
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const showSuccess = () => {
@@ -1162,27 +1263,63 @@ export function Admin() {
                   className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
               </div>
-              <div className="grid md:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label className="block text-sm text-gray-300 mb-2">Image URL</label>
-                  <input
-                    type="text"
-                    value={projectForm.image || ''}
-                    onChange={(e) => setProjectForm({ ...projectForm, image: e.target.value })}
-                    placeholder="e.g., https://example.com/image.png"
-                    className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  />
+              <div className="mb-4">
+                <label className="block text-sm text-gray-300 mb-2">Project Image</label>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <input
+                      type="text"
+                      value={projectForm.image || ''}
+                      onChange={(e) => setProjectForm({ ...projectForm, image: e.target.value })}
+                      placeholder="Paste image URL or upload below"
+                      className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/gif"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      id="project-image-upload"
+                      disabled={uploadingImage}
+                    />
+                    <label
+                      htmlFor="project-image-upload"
+                      className={`flex items-center justify-center gap-2 w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg cursor-pointer hover:bg-white/10 transition-colors ${
+                        uploadingImage ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}
+                    >
+                      <Upload size={20} className="text-purple-400" />
+                      <span className="text-gray-300">
+                        {uploadingImage ? 'Uploading...' : 'Upload Image'}
+                      </span>
+                    </label>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm text-gray-300 mb-2">Tags</label>
-                  <input
-                    type="text"
-                    value={(projectForm.tags || []).join(', ')}
-                    onChange={(e) => setProjectForm({ ...projectForm, tags: e.target.value.split(',').map(tag => tag.trim()) })}
-                    placeholder="e.g., tag1, tag2, tag3"
-                    className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  />
-                </div>
+                {projectForm.image && (
+                  <div className="mt-3 bg-white/5 rounded-lg p-3">
+                    <p className="text-xs text-gray-400 mb-2">Preview:</p>
+                    <img 
+                      src={projectForm.image} 
+                      alt="Project preview" 
+                      className="max-h-32 rounded object-cover"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm text-gray-300 mb-2">Tags</label>
+                <input
+                  type="text"
+                  value={(projectForm.tags || []).join(', ')}
+                  onChange={(e) => setProjectForm({ ...projectForm, tags: e.target.value.split(',').map(tag => tag.trim()) })}
+                  placeholder="e.g., tag1, tag2, tag3"
+                  className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
               </div>
               <div className="grid md:grid-cols-2 gap-4 mb-4">
                 <div>
@@ -1432,27 +1569,63 @@ export function Admin() {
             {/* Add New Client */}
             <div className="bg-white/5 rounded-lg p-4 mb-6">
               <h3 className="text-lg font-semibold text-white mb-4">Add New Client</h3>
-              <div className="grid md:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label className="block text-sm text-gray-300 mb-2">Name</label>
-                  <input
-                    type="text"
-                    value={clientForm.name || ''}
-                    onChange={(e) => setClientForm({ ...clientForm, name: e.target.value })}
-                    placeholder="e.g., Client Name"
-                    className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  />
+              <div className="mb-4">
+                <label className="block text-sm text-gray-300 mb-2">Name</label>
+                <input
+                  type="text"
+                  value={clientForm.name || ''}
+                  onChange={(e) => setClientForm({ ...clientForm, name: e.target.value })}
+                  placeholder="e.g., Client Name"
+                  className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm text-gray-300 mb-2">Client Logo</label>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <input
+                      type="text"
+                      value={clientForm.logo || ''}
+                      onChange={(e) => setClientForm({ ...clientForm, logo: e.target.value })}
+                      placeholder="Paste logo URL or upload below"
+                      className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml"
+                      onChange={handleClientLogoUpload}
+                      className="hidden"
+                      id="client-logo-upload"
+                      disabled={uploadingImage}
+                    />
+                    <label
+                      htmlFor="client-logo-upload"
+                      className={`flex items-center justify-center gap-2 w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg cursor-pointer hover:bg-white/10 transition-colors ${
+                        uploadingImage ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}
+                    >
+                      <Upload size={20} className="text-purple-400" />
+                      <span className="text-gray-300">
+                        {uploadingImage ? 'Uploading...' : 'Upload Logo'}
+                      </span>
+                    </label>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm text-gray-300 mb-2">Logo URL</label>
-                  <input
-                    type="text"
-                    value={clientForm.logo || ''}
-                    onChange={(e) => setClientForm({ ...clientForm, logo: e.target.value })}
-                    placeholder="e.g., https://example.com/logo.png"
-                    className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  />
-                </div>
+                {clientForm.logo && (
+                  <div className="mt-3 bg-white/5 rounded-lg p-3">
+                    <p className="text-xs text-gray-400 mb-2">Preview:</p>
+                    <img 
+                      src={clientForm.logo} 
+                      alt="Client logo preview" 
+                      className="max-h-24 rounded object-contain bg-white p-2"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
               </div>
               <div className="flex items-center gap-4">
                 <Button
