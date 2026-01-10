@@ -40,6 +40,12 @@ export function Footer() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const navigateToPage = (path: string) => {
+    window.history.pushState({}, '', path);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <footer className="relative overflow-hidden">
       {/* Gradient background */}
@@ -187,8 +193,8 @@ export function Footer() {
             </p>
 
             <div className="flex items-center gap-6 text-sm text-gray-300">
-              <button className="hover:text-white transition-colors">Privacy Policy</button>
-              <button className="hover:text-white transition-colors">Terms of Service</button>
+              <button onClick={() => navigateToPage('/privacy-policy')} className="hover:text-white transition-colors">Privacy Policy</button>
+              <button onClick={() => navigateToPage('/terms-of-service')} className="hover:text-white transition-colors">Terms of Service</button>
             </div>
           </div>
         </motion.div>

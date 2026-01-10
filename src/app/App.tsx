@@ -8,6 +8,8 @@ import { Clients } from './components/Clients';
 import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
 import { Admin } from './admin/Admin';
+import { PrivacyPolicy } from './components/PrivacyPolicy';
+import { TermsOfService } from './components/TermsOfService';
 
 export default function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -22,11 +24,30 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  // Check if we're on the admin route
+  // Check routes - SEO-friendly URLs with multiple variations
   const isAdminRoute = currentPath === '/admin' || currentPath === '/admin/';
+  
+  // Privacy Policy - support multiple SEO-friendly variations
+  const isPrivacyRoute = 
+    currentPath === '/privacy-policy' || currentPath === '/privacy-policy/' ||
+    currentPath === '/privacy' || currentPath === '/privacy/';
+  
+  // Terms of Service - support multiple SEO-friendly variations
+  const isTermsRoute = 
+    currentPath === '/terms-of-service' || currentPath === '/terms-of-service/' ||
+    currentPath === '/terms-of-services' || currentPath === '/terms-of-services/' ||
+    currentPath === '/terms' || currentPath === '/terms/';
 
   if (isAdminRoute) {
     return <Admin />;
+  }
+
+  if (isPrivacyRoute) {
+    return <PrivacyPolicy />;
+  }
+
+  if (isTermsRoute) {
+    return <TermsOfService />;
   }
 
   return (
