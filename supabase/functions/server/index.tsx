@@ -492,4 +492,53 @@ app.post("/make-server-a2e14eff/clients/seed", async (c) => {
   }
 });
 
+// Social Media CRUD endpoints
+// Get all social media links
+app.get("/make-server-a2e14eff/social-media", async (c) => {
+  try {
+    const socialMedia = await kv.getByPrefix("socialmedia:");
+    // Sort by order
+    const sorted = socialMedia.sort((a: any, b: any) => a.order - b.order);
+    return c.json(sorted);
+  } catch (error) {
+    console.error("Error fetching social media:", error);
+    return c.json({ success: false, error: String(error) }, 500);
+  }
+});
+
+// Save all social media links
+app.post("/make-server-a2e14eff/social-media", async (c) => {
+  try {
+    const body = await c.req.json();
+    const { socialMedia } = body;
+    
+    if (!Array.isArray(socialMedia)) {
+      return c.json({ success: false, error: "socialMedia must be an array" }, 400);
+    }
+    
+    // Delete all existing social media links
+    const existing = await kv.getByPrefix("socialmedia:");
+    for (const item of existing) {
+      if (item.id) {
+        await kv.del(`socialmedia:${item.id}`);
+      }
+    }
+    
+    // Save new social media links
+    for (const item of socialMedia) {
+      const socialMediaItem = {
+        ...item,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      await kv.set(`socialmedia:${item.id}`, socialMediaItem);
+    }
+    
+    return c.json({ success: true });
+  } catch (error) {
+    console.error("Error saving social media:", error);
+    return c.json({ success: false, error: String(error) }, 500);
+  }
+});
+
 Deno.serve(app.fetch);
