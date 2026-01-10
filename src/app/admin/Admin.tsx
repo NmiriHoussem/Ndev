@@ -129,10 +129,19 @@ export function Admin() {
       });
       
       if (logoResponse.ok) {
-        const logoData = await logoResponse.json();
-        if (logoData?.data) {
-          setCurrentLogo(logoData.data);
-          setLogoType(logoData.type || 'png');
+        const text = await logoResponse.text();
+        if (text && text !== 'null' && text.trim() !== '') {
+          try {
+            const logoData = JSON.parse(text);
+            if (logoData && typeof logoData === 'string') {
+              setCurrentLogo(logoData);
+            }
+          } catch (e) {
+            // If not JSON, use directly
+            if (text.startsWith('data:image')) {
+              setCurrentLogo(text);
+            }
+          }
         }
       }
 
@@ -144,9 +153,19 @@ export function Admin() {
       });
       
       if (whiteLogoResponse.ok) {
-        const whiteLogoData = await whiteLogoResponse.json();
-        if (whiteLogoData) {
-          setCurrentLogoWhite(whiteLogoData);
+        const text = await whiteLogoResponse.text();
+        if (text && text !== 'null' && text.trim() !== '') {
+          try {
+            const logoData = JSON.parse(text);
+            if (logoData && typeof logoData === 'string') {
+              setCurrentLogoWhite(logoData);
+            }
+          } catch (e) {
+            // If not JSON, use directly
+            if (text.startsWith('data:image')) {
+              setCurrentLogoWhite(text);
+            }
+          }
         }
       }
     } catch (err) {
