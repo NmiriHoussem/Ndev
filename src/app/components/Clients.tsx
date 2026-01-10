@@ -139,7 +139,7 @@ export function Clients() {
             </span>
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Proud to partner with leading organizations worldwide ({clients.length} clients)
+            Proud to partner with leading organizations
           </p>
         </motion.div>
 
