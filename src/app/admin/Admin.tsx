@@ -306,13 +306,18 @@ export function Admin() {
         },
         body: JSON.stringify({
           key: 'siteLogo',
-          value: { data: logoPreview, type: logoType || 'png' }
+          value: logoPreview  // Store just the base64 string, not an object
         })
       });
 
       if (!response.ok) throw new Error('Failed to save logo');
 
       setCurrentLogo(logoPreview);
+      setLogoPreview('');
+      
+      // Dispatch event to notify Header to reload logo
+      window.dispatchEvent(new CustomEvent('logoUpdated'));
+      
       showSuccess();
     } catch (err) {
       setError('Failed to save logo');
@@ -396,6 +401,11 @@ export function Admin() {
       if (!response.ok) throw new Error('Failed to save white logo');
 
       setCurrentLogoWhite(logoWhitePreview);
+      setLogoWhitePreview('');
+      
+      // Dispatch event to notify Footer to reload logo
+      window.dispatchEvent(new CustomEvent('logoUpdated'));
+      
       showSuccess();
     } catch (err) {
       setError('Failed to save white logo');

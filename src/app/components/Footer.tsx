@@ -73,6 +73,15 @@ export function Footer() {
     };
 
     loadLogo();
+    
+    // Listen for logo updates from admin panel
+    const handleLogoUpdate = () => {
+      console.log('White logo update event received, reloading...');
+      loadLogo();
+    };
+    
+    window.addEventListener('logoUpdated', handleLogoUpdate);
+    return () => window.removeEventListener('logoUpdated', handleLogoUpdate);
   }, []);
 
   const scrollToSection = (id: string) => {
