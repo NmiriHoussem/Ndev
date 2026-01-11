@@ -3,7 +3,7 @@ import { Upload, Check, AlertCircle, Image as ImageIcon, Download } from 'lucide
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Alert, AlertDescription } from '../components/ui/alert';
-import { projectId } from '../../../utils/supabase/info';
+import { projectId, publicAnonKey } from '../../../utils/supabase/info';
 
 const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-a2e14eff`;
 
@@ -101,7 +101,11 @@ export function FaviconManager() {
 
   const loadFaviconStatus = async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/favicons/status`);
+      const response = await fetch(`${API_BASE}/api/favicons/status`, {
+        headers: {
+          'Authorization': `Bearer ${publicAnonKey}`,
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setFiles(prevFiles =>
@@ -130,6 +134,9 @@ export function FaviconManager() {
 
       const response = await fetch(`${API_BASE}/api/favicons/upload`, {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${publicAnonKey}`,
+        },
         body: formData,
       });
 
