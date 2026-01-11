@@ -1,4 +1,4 @@
-import { projectId } from '../../utils/supabase/info';
+import { projectId, publicAnonKey } from '../../utils/supabase/info';
 
 const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-a2e14eff`;
 
@@ -18,28 +18,39 @@ const FAVICON_MAP: Record<string, { rel: string; type?: string; sizes?: string; 
 
 export async function loadAndInjectFavicons() {
   try {
-    console.log('Loading favicons from Supabase...');
+    console.log('🎨 [Favicon Loader] Starting favicon injection...');
+    console.log('🎨 [Favicon Loader] Fetching from:', `${API_BASE}/api/favicons`);
     
-    // Fetch the list of available favicons
-    const response = await fetch(`${API_BASE}/api/favicons`);
+    // Fetch the list of available favicons with Authorization header
+    const response = await fetch(`${API_BASE}/api/favicons`, {
+      headers: {
+        'Authorization': `Bearer ${publicAnonKey}`,
+      },
+    });
+    
+    console.log('🎨 [Favicon Loader] Response status:', response.status, response.statusText);
     
     if (!response.ok) {
-      console.warn('Failed to load favicons from Supabase, using defaults');
+      console.error('🎨 [Favicon Loader] Failed to load favicons:', response.status, response.statusText);
+      console.warn('🎨 [Favicon Loader] Using default favicons from /public folder');
       return;
     }
     
     const data = await response.json();
+    console.log('🎨 [Favicon Loader] Response data:', data);
     
     if (!data.success || !data.favicons) {
-      console.warn('No favicons found in Supabase');
+      console.warn('🎨 [Favicon Loader] No favicons found in Supabase');
       return;
     }
 
     const favicons = data.favicons as Record<string, string>;
+    console.log('🎨 [Favicon Loader] Found favicons:', Object.keys(favicons));
     let injectedCount = 0;
 
     // Remove existing favicon links (except the defaults)
     const existingLinks = document.querySelectorAll('link[rel*="icon"], link[rel="manifest"], link[rel="mask-icon"]');
+    console.log('🎨 [Favicon Loader] Removing', existingLinks.length, 'existing favicon links');
     existingLinks.forEach(link => {
       const href = link.getAttribute('href');
       // Only remove links that point to local files
@@ -53,7 +64,7 @@ export async function loadAndInjectFavicons() {
       const config = FAVICON_MAP[filename];
       
       if (!config) {
-        console.warn(`Unknown favicon file: ${filename}`);
+        console.warn(`🎨 [Favicon Loader] Unknown favicon file: ${filename}`);
         continue;
       }
 
@@ -72,10 +83,10 @@ export async function loadAndInjectFavicons() {
       document.head.appendChild(link);
       injectedCount++;
       
-      console.log(`✓ Injected: ${filename}`);
+      console.log(`🎨 [Favicon Loader] ✓ Injected: ${filename} → ${link.href}`);
     }
 
-    console.log(`Successfully injected ${injectedCount} favicons from Supabase`);
+    console.log(`🎨 [Favicon Loader] ✅ Successfully injected ${injectedCount} favicons from Supabase`);
 
     // Update theme-color if available
     const themeColorMeta = document.querySelector('meta[name="theme-color"]');
@@ -90,8 +101,8 @@ export async function loadAndInjectFavicons() {
     }
 
   } catch (error) {
-    console.error('Error loading favicons:', error);
-    console.warn('Falling back to default favicons');
+    console.error('🎨 [Favicon Loader] Error loading favicons:', error);
+    console.warn('🎨 [Favicon Loader] Falling back to default favicons');
   }
 }
 
