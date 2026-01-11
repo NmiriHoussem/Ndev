@@ -226,7 +226,7 @@ export function TermsOfService() {
                 <div className="mt-4 p-4 bg-white/5 rounded-lg border border-white/10">
                   <p className="text-white">
                     <strong>Email:</strong> contact@ndev.digital<br />
-                    <strong>Address:</strong> Centre Urbain Nord Tunis
+                    <strong>Address:</strong> Immeuble Tamayouz 1082 Centre Urbain Nord-Tunis
                   </p>
                 </div>
               </section>

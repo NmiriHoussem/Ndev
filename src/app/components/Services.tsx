@@ -184,7 +184,7 @@ export function Services() {
                   </motion.div>
 
                   <div className={`flex-1 ${isEven ? 'lg:text-left' : 'lg:text-right'} text-center`}>
-                    <h3 className="text-4xl md:text-5xl mb-3 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                    <h3 className="text-4xl md:text-5xl mb-3 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent leading-tight pb-2">
                       {category.title}
                     </h3>
                     <p className="text-xl text-gray-600">{category.description}</p>

@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Linkedin, Heart, ArrowUp } from 'lucide-react';
+import { Linkedin, Heart, ArrowUp, Mail, Phone, MapPin } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { projectId, publicAnonKey } from '../../../utils/supabase/info';
 
@@ -204,7 +204,7 @@ export function Footer() {
             </ul>
           </motion.div>
 
-          {/* Newsletter */}
+          {/* Contact & Legal */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -212,24 +212,51 @@ export function Footer() {
             transition={{ duration: 0.6, delay: 0.3 }}
           >
             <h3 className="text-xl mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-              Stay Updated
+              Contact
             </h3>
-            <p className="text-gray-300 mb-4 text-sm">
-              Subscribe to our newsletter for the latest updates and insights.
-            </p>
-            <div className="flex gap-2">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 transition-colors"
-              />
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg hover:shadow-lg hover:shadow-purple-500/50 transition-all"
+            <ul className="space-y-4 mb-6">
+              <li>
+                <a 
+                  href="mailto:contact@ndev.digital"
+                  className="text-gray-300 hover:text-white transition-colors flex items-center gap-3 group"
+                >
+                  <Mail size={18} className="text-purple-400 group-hover:text-purple-300 transition-colors" />
+                  <span className="text-sm">contact@ndev.digital</span>
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="tel:+21654882779"
+                  className="text-gray-300 hover:text-white transition-colors flex items-center gap-3 group"
+                >
+                  <Phone size={18} className="text-blue-400 group-hover:text-blue-300 transition-colors" />
+                  <span className="text-sm">+216 54 882 779</span>
+                </a>
+              </li>
+              <li>
+                <div className="text-gray-300 flex items-start gap-3">
+                  <MapPin size={18} className="text-green-400 mt-0.5 flex-shrink-0" />
+                  <span className="text-sm">Immeuble Tamayouz 1082<br />Centre Urbain Nord-Tunis</span>
+                </div>
+              </li>
+            </ul>
+            
+            {/* Legal Links */}
+            <div className="space-y-2 pt-4 border-t border-white/10">
+              <button 
+                onClick={() => navigateToPage('/privacy-policy')}
+                className="text-gray-300 hover:text-white transition-colors flex items-center gap-2 group text-sm"
               >
-                →
-              </motion.button>
+                <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                Privacy Policy
+              </button>
+              <button 
+                onClick={() => navigateToPage('/terms-of-service')}
+                className="text-gray-300 hover:text-white transition-colors flex items-center gap-2 group text-sm"
+              >
+                <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                Terms of Service
+              </button>
             </div>
           </motion.div>
         </div>

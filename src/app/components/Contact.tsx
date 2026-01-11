@@ -24,7 +24,7 @@ const contactInfo = [
   {
     icon: MapPin,
     title: 'Location',
-    value: 'Centre Urbain Nord Tunis',
+    value: 'Immeuble Tamayouz 1082 Centre Urbain Nord-Tunis',
     link: null,
     gradient: 'from-green-500 to-emerald-500',
   },
