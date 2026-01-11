@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NdevDigital - Favicon Preview & Status</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 32px;
+    }
+    .subtitle {
+      color: #666;
+      margin-bottom: 40px;
+      font-size: 18px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+    .favicon-card {
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .favicon-card:hover {
+      border-color: #667eea;
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+    }
+    .favicon-preview {
+      width: 100%;
+      height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f5f5f5;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    .favicon-preview img {
+      max-width: 100%;
+      max-height: 100%;
+      image-rendering: pixelated;
+    }
+    .favicon-name {
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 5px;
+    }
+    .favicon-size {
+      color: #999;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    .status {
+      display: inline-block;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .status.missing {
+      background: #ffebee;
+      color: #c62828;
+    }
+    .status.found {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+    .instructions {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      border-radius: 12px;
+      margin-top: 40px;
+    }
+    .instructions h2 {
+      margin-bottom: 15px;
+    }
+    .instructions ol {
+      margin-left: 20px;
+      line-height: 1.8;
+    }
+    .instructions a {
+      color: #fff;
+      text-decoration: underline;
+    }
+    .svg-preview {
+      width: 100px;
+      height: 100px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 NdevDigital Favicon Status</h1>
+    <p class="subtitle">Check which favicon files are present and which need to be generated</p>
+    
+    <div class="grid">
+      <!-- SVG Favicon -->
+      <div class="favicon-card">
+        <div class="favicon-preview">
+          <img src="favicon.svg" alt="favicon.svg" class="svg-preview" onerror="this.parentElement.innerHTML='<span style=color:#999>Missing</span>'">
+        </div>
+        <div class="favicon-name">favicon.svg</div>
+        <div class="favicon-size">Vector (Modern browsers)</div>
+        <span class="status found" id="status-svg">✓ Found</span>
+      </div>
+
+      <!-- ICO Favicon -->
+      <div class="favicon-card">
+        <div class="favicon-preview">
+          <img src="favicon.ico" alt="favicon.ico" style="width: 32px; height: 32px;" onerror="this.parentElement.innerHTML='<span style=color:#999>Missing</span>'">
+        </div>
+        <div class="favicon-name">favicon.ico</div>
+        <div class="favicon-size">16x16, 32x32 (Legacy)</div>
+        <span class="status missing" id="status-ico">✗ Missing</span>
+      </div>
+
+      <!-- 16x16 PNG -->
+      <div class="favicon-card">
+        <div class="favicon-preview">
+          <img src="favicon-16x16.png" alt="16x16" style="width: 16px; height: 16px;" onerror="this.parentElement.innerHTML='<span style=color:#999>Missing</span>'">
+        </div>
+        <div class="favicon-name">favicon-16x16.png</div>
+        <div class="favicon-size">16×16 pixels</div>
+        <span class="status missing" id="status-16">✗ Missing</span>
+      </div>
+
+      <!-- 32x32 PNG -->
+      <div class="favicon-card">
+        <div class="favicon-preview">
+          <img src="favicon-32x32.png" alt="32x32" style="width: 32px; height: 32px;" onerror="this.parentElement.innerHTML='<span style=color:#999>Missing</span>'">
+        </div>
+        <div class="favicon-name">favicon-32x32.png</div>
+        <div class="favicon-size">32×32 pixels</div>
+        <span class="status missing" id="status-32">✗ Missing</span>
+      </div>
+
+      <!-- Apple Touch Icon -->
+      <div class="favicon-card">
+        <div class="favicon-preview">
+          <img src="apple-touch-icon.png" alt="Apple Touch Icon" style="width: 100px; height: 100px;" onerror="this.parentElement.innerHTML='<span style=color:#999>Missing</span>'">
+        </div>
+        <div class="favicon-name">apple-touch-icon.png</div>
+        <div class="favicon-size">180×180 pixels (iOS)</div>
+        <span class="status missing" id="status-apple">✗ Missing</span>
+      </div>
+
+      <!-- Android 192 -->
+      <div class="favicon-card">
+        <div class="favicon-preview">
+          <img src="android-chrome-192x192.png" alt="Android 192" style="width: 100px; height: 100px;" onerror="this.parentElement.innerHTML='<span style=color:#999>Missing</span>'">
+        </div>
+        <div class="favicon-name">android-chrome-192x192.png</div>
+        <div class="favicon-size">192×192 pixels</div>
+        <span class="status missing" id="status-android192">✗ Missing</span>
+      </div>
+
+      <!-- Android 512 -->
+      <div class="favicon-card">
+        <div class="favicon-preview">
+          <img src="android-chrome-512x512.png" alt="Android 512" style="width: 100px; height: 100px;" onerror="this.parentElement.innerHTML='<span style=color:#999>Missing</span>'">
+        </div>
+        <div class="favicon-name">android-chrome-512x512.png</div>
+        <div class="favicon-size">512×512 pixels</div>
+        <span class="status missing" id="status-android512">✗ Missing</span>
+      </div>
+
+      <!-- MS Tile -->
+      <div class="favicon-card">
+        <div class="favicon-preview">
+          <img src="mstile-150x150.png" alt="MS Tile" style="width: 100px; height: 100px;" onerror="this.parentElement.innerHTML='<span style=color:#999>Missing</span>'">
+        </div>
+        <div class="favicon-name">mstile-150x150.png</div>
+        <div class="favicon-size">150×150 pixels (Windows)</div>
+        <span class="status missing" id="status-mstile">✗ Missing</span>
+      </div>
+
+      <!-- Safari Pinned Tab -->
+      <div class="favicon-card">
+        <div class="favicon-preview">
+          <img src="safari-pinned-tab.svg" alt="Safari Pinned" class="svg-preview" onerror="this.parentElement.innerHTML='<span style=color:#999>Missing</span>'">
+        </div>
+        <div class="favicon-name">safari-pinned-tab.svg</div>
+        <div class="favicon-size">Vector (Safari)</div>
+        <span class="status found" id="status-safari">✓ Found</span>
+      </div>
+    </div>
+
+    <div class="instructions">
+      <h2>📝 Quick Setup Instructions</h2>
+      <ol>
+        <li>Go to <a href="https://realfavicongenerator.net/" target="_blank">RealFaviconGenerator.net</a></li>
+        <li>Upload the <code>favicon.svg</code> file from this directory</li>
+        <li>Customize colors (use #5865F2 for theme color)</li>
+        <li>Generate and download the favicon package</li>
+        <li>Extract all files to the <code>/public</code> folder</li>
+        <li>Refresh this page to verify all icons are present</li>
+      </ol>
+      <p style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.3);">
+        <strong>Need help?</strong> Check the <code>/SETUP-FAVICONS.md</code> file for detailed instructions.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // Check which files actually exist
+    const files = [
+      { id: 'ico', path: 'favicon.ico' },
+      { id: '16', path: 'favicon-16x16.png' },
+      { id: '32', path: 'favicon-32x32.png' },
+      { id: 'apple', path: 'apple-touch-icon.png' },
+      { id: 'android192', path: 'android-chrome-192x192.png' },
+      { id: 'android512', path: 'android-chrome-512x512.png' },
+      { id: 'mstile', path: 'mstile-150x150.png' }
+    ];
+
+    files.forEach(file => {
+      const img = new Image();
+      img.onload = function() {
+        const statusEl = document.getElementById('status-' + file.id);
+        if (statusEl) {
+          statusEl.className = 'status found';
+          statusEl.textContent = '✓ Found';
+        }
+      };
+      img.src = file.path;
+    });
+  </script>
+</body>
+</html>

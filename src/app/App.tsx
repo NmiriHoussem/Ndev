@@ -10,6 +10,7 @@ import { Footer } from './components/Footer';
 import { Admin } from './admin/Admin';
 import { PrivacyPolicy } from './components/PrivacyPolicy';
 import { TermsOfService } from './components/TermsOfService';
+import { SEO, SEOConfigs } from './components/SEO';
 
 export default function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -43,15 +44,26 @@ export default function App() {
   }
 
   if (isPrivacyRoute) {
-    return <PrivacyPolicy />;
+    return (
+      <>
+        <SEO {...SEOConfigs.privacy} />
+        <PrivacyPolicy />
+      </>
+    );
   }
 
   if (isTermsRoute) {
-    return <TermsOfService />;
+    return (
+      <>
+        <SEO {...SEOConfigs.terms} />
+        <TermsOfService />
+      </>
+    );
   }
 
   return (
     <div className="min-h-screen">
+      <SEO {...SEOConfigs.home} />
       <Header />
       <main>
         <Hero />
