@@ -1094,77 +1094,75 @@ app.post("/make-server-a2e14eff/set-og-image-config", async (c) => {
 // Dynamic OG Image Generator
 app.get("/make-server-a2e14eff/og-image", async (c) => {
   try {
-    // Generate a beautiful OG image using HTML Canvas
-    // Since we can't use canvas directly in Deno, we'll create SVG that can be converted
+    // Generate a beautiful OG image as SVG
+    // SVG works for most social platforms and is lightweight
     
-    const svg = `
-    <svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#0A0A0F;stop-opacity:1" />
-          <stop offset="50%" style="stop-color:#1A1A2E;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#0F0F1A;stop-opacity:1" />
-        </linearGradient>
-        <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" style="stop-color:#5865F2;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
-        </linearGradient>
-        <filter id="glow">
-          <feGaussianBlur stdDeviation="15" result="coloredBlur"/>
-          <feMerge>
-            <feMergeNode in="coloredBlur"/>
-            <feMergeNode in="SourceGraphic"/>
-          </feMerge>
-        </filter>
-      </defs>
-      
-      <!-- Background -->
-      <rect width="1200" height="630" fill="url(#bg)"/>
-      
-      <!-- Decorative circles with glow -->
-      <circle cx="200" cy="150" r="100" fill="#5865F2" opacity="0.1" filter="url(#glow)"/>
-      <circle cx="1000" cy="480" r="120" fill="#8B5CF6" opacity="0.1" filter="url(#glow)"/>
-      
-      <!-- Top accent bar -->
-      <rect width="1200" height="8" fill="url(#accent)"/>
-      
-      <!-- Main content -->
-      <text x="600" y="220" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="white" text-anchor="middle">
-        NdevDigital
-      </text>
-      
-      <text x="600" y="300" font-family="Arial, sans-serif" font-size="36" fill="#B4B4B4" text-anchor="middle">
-        Building Digital Excellence
-      </text>
-      
-      <!-- Service pills -->
-      <g transform="translate(600, 370)">
-        <!-- UI/UX Design -->
-        <rect x="-280" y="0" width="140" height="40" rx="20" fill="#5865F2" opacity="0.2"/>
-        <text x="-210" y="27" font-family="Arial, sans-serif" font-size="16" fill="#5865F2" text-anchor="middle">UI/UX Design</text>
-        
-        <!-- Web Dev -->
-        <rect x="-120" y="0" width="120" height="40" rx="20" fill="#8B5CF6" opacity="0.2"/>
-        <text x="-60" y="27" font-family="Arial, sans-serif" font-size="16" fill="#8B5CF6" text-anchor="middle">Web Dev</text>
-        
-        <!-- SaaS -->
-        <rect x="20" y="0" width="80" height="40" rx="20" fill="#5865F2" opacity="0.2"/>
-        <text x="60" y="27" font-family="Arial, sans-serif" font-size="16" fill="#5865F2" text-anchor="middle">SaaS</text>
-        
-        <!-- E-Learning -->
-        <rect x="120" y="0" width="120" height="40" rx="20" fill="#8B5CF6" opacity="0.2"/>
-        <text x="180" y="27" font-family="Arial, sans-serif" font-size="16" fill="#8B5CF6" text-anchor="middle">E-Learning</text>
-      </g>
-      
-      <!-- Bottom info -->
-      <text x="600" y="550" font-family="Arial, sans-serif" font-size="24" fill="#808080" text-anchor="middle">
-        📧 ndevdigital@sent.com  •  📍 Tunis, Tunisia
-      </text>
-    </svg>
-    `;
+    const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0A0A0F;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1A1A2E;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0F0F1A;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#5865F2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="15" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  
+  <!-- Decorative circles with glow -->
+  <circle cx="200" cy="150" r="100" fill="#5865F2" opacity="0.1" filter="url(#glow)"/>
+  <circle cx="1000" cy="480" r="120" fill="#8B5CF6" opacity="0.1" filter="url(#glow)"/>
+  
+  <!-- Top accent bar -->
+  <rect width="1200" height="8" fill="url(#accent)"/>
+  
+  <!-- Main content -->
+  <text x="600" y="220" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="white" text-anchor="middle">
+    NdevDigital
+  </text>
+  
+  <text x="600" y="300" font-family="Arial, sans-serif" font-size="36" fill="#B4B4B4" text-anchor="middle">
+    Building Digital Excellence
+  </text>
+  
+  <!-- Service pills -->
+  <g transform="translate(600, 370)">
+    <!-- UI/UX Design -->
+    <rect x="-280" y="0" width="140" height="40" rx="20" fill="#5865F2" opacity="0.2"/>
+    <text x="-210" y="27" font-family="Arial, sans-serif" font-size="16" fill="#5865F2" text-anchor="middle">UI/UX Design</text>
+    
+    <!-- Web Dev -->
+    <rect x="-120" y="0" width="120" height="40" rx="20" fill="#8B5CF6" opacity="0.2"/>
+    <text x="-60" y="27" font-family="Arial, sans-serif" font-size="16" fill="#8B5CF6" text-anchor="middle">Web Dev</text>
+    
+    <!-- SaaS -->
+    <rect x="20" y="0" width="80" height="40" rx="20" fill="#5865F2" opacity="0.2"/>
+    <text x="60" y="27" font-family="Arial, sans-serif" font-size="16" fill="#5865F2" text-anchor="middle">SaaS</text>
+    
+    <!-- E-Learning -->
+    <rect x="120" y="0" width="120" height="40" rx="20" fill="#8B5CF6" opacity="0.2"/>
+    <text x="180" y="27" font-family="Arial, sans-serif" font-size="16" fill="#8B5CF6" text-anchor="middle">E-Learning</text>
+  </g>
+  
+  <!-- Bottom info -->
+  <text x="600" y="550" font-family="Arial, sans-serif" font-size="24" fill="#808080" text-anchor="middle">
+    ndevdigital@sent.com • Tunis, Tunisia
+  </text>
+</svg>`;
 
-    // Return SVG as PNG-compatible response
-    // For true PNG, you'd need a canvas library, but SVG works for most social platforms
+    // Return SVG with proper headers
     return new Response(svg, {
       headers: {
         'Content-Type': 'image/svg+xml',

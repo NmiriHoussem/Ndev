@@ -37,25 +37,28 @@ export function OGImageManager() {
           console.log('✅ Using generated OG image');
           return;
         }
+        
+        // Check if there's a custom URL
+        if (data.customUrl) {
+          setUseGenerated(false);
+          setOgImageUrl(data.customUrl);
+          setPreviewUrl(data.customUrl);
+          console.log('✅ Using custom OG image:', data.customUrl);
+          return;
+        }
       }
       
-      // Try to load custom uploaded image
-      const { data: kvData } = await supabase
-        .from('kv_store_a2e14eff')
-        .select('value')
-        .eq('key', OG_IMAGE_KEY)
-        .single();
-
-      if (kvData?.value) {
-        const url = kvData.value;
-        setOgImageUrl(url);
-        setPreviewUrl(url);
-        console.log('✅ Loaded custom OG image:', url);
-      } else {
-        console.log('ℹ️ No custom OG image found');
-      }
+      // Default to generated image if nothing is configured
+      console.log('ℹ️ No OG image configured, defaulting to generated');
+      setUseGenerated(true);
+      setOgImageUrl(`${API_BASE}/og-image`);
+      setPreviewUrl(`${API_BASE}/og-image`);
     } catch (error) {
       console.error('❌ Error loading OG image:', error);
+      // Fallback to generated image on error
+      setUseGenerated(true);
+      setOgImageUrl(`${API_BASE}/og-image`);
+      setPreviewUrl(`${API_BASE}/og-image`);
     }
   };
 
@@ -187,6 +190,19 @@ export function OGImageManager() {
               alt="OG Preview" 
               className="w-full max-w-2xl mx-auto rounded-lg shadow-2xl"
               style={{ aspectRatio: '1.91/1' }}
+              onError={(e) => {
+                console.error('Failed to load OG image preview');
+                // Show a placeholder or error message
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                const parent = target.parentElement;
+                if (parent && !parent.querySelector('.error-message')) {
+                  const errorDiv = document.createElement('div');
+                  errorDiv.className = 'error-message text-center text-yellow-400 p-8';
+                  errorDiv.innerHTML = '⚠️ Preview not available. The OG image is configured but may take a moment to load on social media platforms. Click the links below to clear social media caches.';
+                  parent.appendChild(errorDiv);
+                }
+              }}
             />
           </div>
           {useGenerated && (
