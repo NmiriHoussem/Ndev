@@ -10,7 +10,7 @@ interface SEOProps {
 }
 
 const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-a2e14eff`;
-const DEFAULT_OG_IMAGE = 'https://images.unsplash.com/photo-1517309561013-16f6e4020305?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200&h=630';
+const DEFAULT_OG_IMAGE = 'https://mdauikij21vpccoytai.supabase.co/storage/v1/object/public/make-a2e14eff-og-images/og-image.png';
 
 export function SEO({
   title = 'NdevDigital - Building Digital Excellence | UI/UX, Web Development & SaaS Solutions',
