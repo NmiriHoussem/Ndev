@@ -32,20 +32,16 @@ const contactInfo = [
 ];
 
 export function Contact() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    company: '',
-    message: '',
-  });
-  const [focusedField, setFocusedField] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [formData, setFormData] = useState({ name: '', email: '', company: '', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setIsSubmitting(true);
     setError(false);
     setSuccess(false);
 
@@ -65,6 +61,7 @@ export function Contact() {
         setSuccess(true);
         setFormData({ name: '', email: '', company: '', message: '' });
         console.log('Contact form submitted successfully');
+        setShowSuccessModal(true);
       } else {
         setError(true);
         const errorMessage = data.error || 'Failed to send message. Please try again.';
@@ -82,12 +79,20 @@ export function Contact() {
       console.error('Error submitting contact form:', err);
       alert('An unexpected error occurred. Please try again later.');
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleFocus = (field: string) => {
+    setFocusedField(field);
+  };
+
+  const handleBlur = () => {
+    setFocusedField(null);
   };
 
   return (
@@ -242,8 +247,6 @@ export function Contact() {
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        onFocus={() => setFocusedField('name')}
-                        onBlur={() => setFocusedField(null)}
                         required
                         placeholder="Your name"
                         className={`transition-all duration-300 ${
@@ -251,6 +254,8 @@ export function Contact() {
                             ? 'border-purple-400 shadow-lg shadow-purple-200' 
                             : 'border-gray-300'
                         }`}
+                        onFocus={() => handleFocus('name')}
+                        onBlur={handleBlur}
                       />
                       {focusedField === 'name' && (
                         <motion.div
@@ -272,8 +277,6 @@ export function Contact() {
                         type="email"
                         value={formData.email}
                         onChange={handleChange}
-                        onFocus={() => setFocusedField('email')}
-                        onBlur={() => setFocusedField(null)}
                         required
                         placeholder="your.email@example.com"
                         className={`transition-all duration-300 ${
@@ -281,6 +284,8 @@ export function Contact() {
                             ? 'border-purple-400 shadow-lg shadow-purple-200' 
                             : 'border-gray-300'
                         }`}
+                        onFocus={() => handleFocus('email')}
+                        onBlur={handleBlur}
                       />
                       {focusedField === 'email' && (
                         <motion.div
@@ -301,14 +306,14 @@ export function Contact() {
                         name="company"
                         value={formData.company}
                         onChange={handleChange}
-                        onFocus={() => setFocusedField('company')}
-                        onBlur={() => setFocusedField(null)}
                         placeholder="Your company name"
                         className={`transition-all duration-300 ${
                           focusedField === 'company' 
                             ? 'border-purple-400 shadow-lg shadow-purple-200' 
                             : 'border-gray-300'
                         }`}
+                        onFocus={() => handleFocus('company')}
+                        onBlur={handleBlur}
                       />
                       {focusedField === 'company' && (
                         <motion.div
@@ -329,8 +334,6 @@ export function Contact() {
                         name="message"
                         value={formData.message}
                         onChange={handleChange}
-                        onFocus={() => setFocusedField('message')}
-                        onBlur={() => setFocusedField(null)}
                         required
                         placeholder="Tell us about your project..."
                         rows={5}
@@ -339,6 +342,8 @@ export function Contact() {
                             ? 'border-purple-400 shadow-lg shadow-purple-200' 
                             : 'border-gray-300'
                         }`}
+                        onFocus={() => handleFocus('message')}
+                        onBlur={handleBlur}
                       />
                       {focusedField === 'message' && (
                         <motion.div
@@ -355,7 +360,7 @@ export function Contact() {
                       className="w-full bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 hover:shadow-2xl hover:shadow-purple-500/50 text-white py-6 text-lg border-0 relative overflow-hidden group"
                     >
                       <span className="relative z-10 flex items-center justify-center gap-2">
-                        {loading ? (
+                        {isSubmitting ? (
                           <Loader2 size={20} className="animate-spin" />
                         ) : (
                           <>
@@ -387,6 +392,81 @@ export function Contact() {
           </motion.div>
         </div>
       </div>
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <motion.div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => setShowSuccessModal(false)}
+        >
+          <motion.div
+            className="relative bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden"
+            initial={{ scale: 0.9, y: 20 }}
+            animate={{ scale: 1, y: 0 }}
+            exit={{ scale: 0.9, y: 20 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Gradient header */}
+            <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500"></div>
+            
+            {/* Content */}
+            <div className="p-8 text-center">
+              {/* Success icon with animation */}
+              <motion.div
+                className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center mb-6 shadow-lg shadow-green-500/50"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: "spring", stiffness: 200, damping: 10 }}
+              >
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  <CheckCircle className="text-white" size={40} />
+                </motion.div>
+              </motion.div>
+
+              {/* Title */}
+              <motion.h3
+                className="text-2xl mb-3 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                Message Sent Successfully!
+              </motion.h3>
+
+              {/* Description */}
+              <motion.p
+                className="text-gray-600 mb-8"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                Thank you for reaching out! We've received your message and will get back to you as soon as possible.
+              </motion.p>
+
+              {/* Close button */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+              >
+                <Button
+                  onClick={() => setShowSuccessModal(false)}
+                  className="w-full bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 hover:shadow-xl hover:shadow-purple-500/50 text-white py-3 border-0"
+                >
+                  Got it, thanks!
+                </Button>
+              </motion.div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
     </section>
   );
 }
