@@ -11,7 +11,7 @@ interface SEOProps {
 export function SEO({
   title = 'NdevDigital - Building Digital Excellence | UI/UX, Web Development & SaaS Solutions',
   description = 'Transform your digital presence with NdevDigital. Expert UI/UX design, web development, branding, SaaS products, e-learning solutions, and game development. Based in Tunis, serving clients worldwide.',
-  image = 'https://images.unsplash.com/photo-1611648694931-1aeda329f9da?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200',
+  image = 'https://images.unsplash.com/photo-1517309561013-16f6e4020305?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200&h=630',
   type = 'website',
   url = 'https://ndev.digital/'
 }: SEOProps) {
