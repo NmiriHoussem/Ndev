@@ -906,6 +906,7 @@ app.get("/make-server-a2e14eff/api/favicons", async (c) => {
     const favicons: Record<string, string> = {};
     
     for (const file of files || []) {
+      // Get public URL
       const { data } = supabase.storage
         .from(FAVICON_BUCKET_NAME)
         .getPublicUrl(file.name);
@@ -914,7 +915,51 @@ app.get("/make-server-a2e14eff/api/favicons", async (c) => {
 
     return c.json({ success: true, favicons });
   } catch (error) {
-    console.error('Error in get favicons endpoint:', error);
+    console.error('Error in favicons endpoint:', error);
+    return c.json({ success: false, error: String(error) }, 500);
+  }
+});
+
+// Serve individual favicon files (proxy endpoint)
+app.get("/make-server-a2e14eff/favicon/:filename", async (c) => {
+  try {
+    const filename = c.req.param('filename');
+    
+    // Download the file from Supabase Storage
+    const { data, error } = await supabase.storage
+      .from(FAVICON_BUCKET_NAME)
+      .download(filename);
+
+    if (error || !data) {
+      console.error(`Error downloading favicon ${filename}:`, error);
+      return c.notFound();
+    }
+
+    // Determine content type
+    let contentType = 'application/octet-stream';
+    if (filename.endsWith('.ico')) {
+      contentType = 'image/x-icon';
+    } else if (filename.endsWith('.svg')) {
+      contentType = 'image/svg+xml';
+    } else if (filename.endsWith('.webmanifest') || filename.endsWith('.json')) {
+      contentType = 'application/manifest+json';
+    } else if (filename.endsWith('.png')) {
+      contentType = 'image/png';
+    }
+
+    // Convert Blob to ArrayBuffer
+    const arrayBuffer = await data.arrayBuffer();
+    
+    // Return the file with proper headers
+    return new Response(arrayBuffer, {
+      headers: {
+        'Content-Type': contentType,
+        'Cache-Control': 'public, max-age=31536000, immutable', // Cache for 1 year
+        'Access-Control-Allow-Origin': '*',
+      },
+    });
+  } catch (error) {
+    console.error('Error serving favicon:', error);
     return c.json({ success: false, error: String(error) }, 500);
   }
 });

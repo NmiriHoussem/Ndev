@@ -101,13 +101,20 @@ export function FaviconManager() {
 
   const loadFaviconStatus = async () => {
     try {
+      console.log('Loading favicon status from:', `${API_BASE}/api/favicons/status`);
+      console.log('Using publicAnonKey:', publicAnonKey ? 'Key is set' : 'Key is missing!');
+      
       const response = await fetch(`${API_BASE}/api/favicons/status`, {
         headers: {
           'Authorization': `Bearer ${publicAnonKey}`,
         },
       });
+      
+      console.log('Favicon status response:', response.status, response.statusText);
+      
       if (response.ok) {
         const data = await response.json();
+        console.log('Favicon status data:', data);
         setFiles(prevFiles =>
           prevFiles.map(file => ({
             ...file,
@@ -115,6 +122,8 @@ export function FaviconManager() {
             url: data.files?.[file.name] ? data.urls?.[file.name] : undefined,
           }))
         );
+      } else {
+        console.error('Failed to load favicon status:', response.status, response.statusText);
       }
     } catch (error) {
       console.error('Error loading favicon status:', error);
@@ -216,9 +225,20 @@ export function FaviconManager() {
           <p>1. Download favicon package from <a href="https://realfavicongenerator.net/" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">RealFaviconGenerator.net</a></p>
           <p>2. Extract the downloaded ZIP file</p>
           <p>3. Upload each file below using the corresponding upload button</p>
+          <p>4. After uploading, refresh your website to see the new favicons!</p>
           <p className="text-sm text-gray-400 mt-4">
-            💡 <strong>Note:</strong> Files are stored in Supabase Storage and will persist across deployments
+            💡 <strong>Note:</strong> Files are stored in Supabase Storage and automatically load on your website. They persist across all deployments!
           </p>
+          <div className="mt-4 pt-4 border-t border-gray-700">
+            <Button
+              onClick={() => window.location.reload()}
+              variant="outline"
+              className="w-full bg-cyan-500/10 hover:bg-cyan-500/20 border-cyan-500/30 text-cyan-400"
+            >
+              <Check className="h-4 w-4 mr-2" />
+              Test Favicons (Reload Page)
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
