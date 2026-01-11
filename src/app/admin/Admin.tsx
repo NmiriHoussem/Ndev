@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
 import { 
   Upload, LogOut, Save, X, Check, Image as ImageIcon, 
-  FileText, Layout, Plus, Edit2, Trash2, Power, Eye, EyeOff, Folder, Users, Share2 
+  FileText, Layout, Plus, Edit2, Trash2, Power, Eye, EyeOff, Folder, Users, Share2, Star 
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { supabase } from '../../../utils/supabase/client';
 import { projectId, publicAnonKey } from '../../../utils/supabase/info';
 import { SocialMediaManager } from './SocialMediaManager';
+import { FaviconManager } from './FaviconManager';
 
 const ADMIN_EMAIL = 'houssem.addin@gmail.com';
 const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-a2e14eff`;
 
-type Tab = 'logo' | 'sections' | 'content' | 'projects' | 'clients' | 'social';
+type Tab = 'logo' | 'sections' | 'content' | 'projects' | 'clients' | 'social' | 'favicons';
 
 interface Section {
   id: string;
@@ -1057,6 +1058,17 @@ export function Admin() {
               <Share2 className="inline-block mr-2" size={20} />
               Social Media
             </button>
+            <button
+              onClick={() => setActiveTab('favicons')}
+              className={`px-4 py-2 font-medium transition-colors border-b-2 ${
+                activeTab === 'favicons'
+                  ? 'text-purple-400 border-purple-400'
+                  : 'text-gray-400 border-transparent hover:text-white'
+              }`}
+            >
+              <Star className="inline-block mr-2" size={20} />
+              Favicons
+            </button>
           </div>
         </div>
 
@@ -2087,6 +2099,13 @@ export function Admin() {
         {activeTab === 'social' && (
           <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20">
             <SocialMediaManager />
+          </div>
+        )}
+
+        {/* Favicons Tab */}
+        {activeTab === 'favicons' && (
+          <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20">
+            <FaviconManager />
           </div>
         )}
       </div>

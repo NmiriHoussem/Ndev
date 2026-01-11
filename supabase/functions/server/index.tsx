@@ -13,23 +13,50 @@ const supabase = createClient(
 
 // Create storage buckets on startup
 const BUCKET_NAME = 'make-a2e14eff-projects';
+const FAVICON_BUCKET_NAME = 'make-a2e14eff-favicons';
 
 async function initializeStorage() {
   try {
     const { data: buckets } = await supabase.storage.listBuckets();
-    const bucketExists = buckets?.some(bucket => bucket.name === BUCKET_NAME);
     
-    if (!bucketExists) {
+    // Create projects bucket
+    const projectBucketExists = buckets?.some(bucket => bucket.name === BUCKET_NAME);
+    if (!projectBucketExists) {
       const { error } = await supabase.storage.createBucket(BUCKET_NAME, {
         public: false,
         fileSizeLimit: 5242880, // 5MB
         allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
       });
       
-      if (error) {
+      if (error && error.statusCode !== '409') {
+        // Only log error if it's not "already exists" (409)
         console.error('Error creating storage bucket:', error);
-      } else {
+      } else if (!error) {
         console.log(`Storage bucket "${BUCKET_NAME}" created successfully`);
+      }
+    }
+    
+    // Create public favicons bucket
+    const faviconBucketExists = buckets?.some(bucket => bucket.name === FAVICON_BUCKET_NAME);
+    if (!faviconBucketExists) {
+      const { error } = await supabase.storage.createBucket(FAVICON_BUCKET_NAME, {
+        public: true, // Public access for favicons
+        fileSizeLimit: 2097152, // 2MB
+        allowedMimeTypes: [
+          'image/x-icon',
+          'image/vnd.microsoft.icon',
+          'image/png',
+          'image/svg+xml',
+          'application/json',
+          'application/manifest+json'
+        ]
+      });
+      
+      if (error && error.statusCode !== '409') {
+        // Only log error if it's not "already exists" (409)
+        console.error('Error creating favicon bucket:', error);
+      } else if (!error) {
+        console.log(`Favicon bucket "${FAVICON_BUCKET_NAME}" created successfully`);
       }
     }
   } catch (error) {
@@ -758,6 +785,137 @@ app.post("/make-server-a2e14eff/contact", async (c) => {
       success: false, 
       error: 'An unexpected error occurred. Please try again later.' 
     }, 500);
+  }
+});
+
+// Favicon Management endpoints
+// Get favicon status (which files are uploaded)
+app.get("/make-server-a2e14eff/api/favicons/status", async (c) => {
+  try {
+    const { data: files, error } = await supabase.storage
+      .from(FAVICON_BUCKET_NAME)
+      .list('', {
+        limit: 100,
+        offset: 0,
+      });
+
+    if (error) {
+      console.error('Error listing favicon files:', error);
+      return c.json({ success: false, error: error.message }, 500);
+    }
+
+    const fileMap: Record<string, boolean> = {};
+    const urlMap: Record<string, string> = {};
+    
+    for (const file of files || []) {
+      fileMap[file.name] = true;
+      // Get public URL
+      const { data } = supabase.storage
+        .from(FAVICON_BUCKET_NAME)
+        .getPublicUrl(file.name);
+      urlMap[file.name] = data.publicUrl;
+    }
+
+    return c.json({ 
+      success: true, 
+      files: fileMap,
+      urls: urlMap
+    });
+  } catch (error) {
+    console.error('Error in favicon status endpoint:', error);
+    return c.json({ success: false, error: String(error) }, 500);
+  }
+});
+
+// Upload favicon file
+app.post("/make-server-a2e14eff/api/favicons/upload", async (c) => {
+  try {
+    const formData = await c.req.formData();
+    const file = formData.get('file') as File;
+    const fileName = formData.get('fileName') as string;
+    
+    if (!file || !fileName) {
+      return c.json({ success: false, error: 'File and fileName are required' }, 400);
+    }
+
+    // Convert file to ArrayBuffer
+    const arrayBuffer = await file.arrayBuffer();
+    const fileBuffer = new Uint8Array(arrayBuffer);
+
+    // Determine content type
+    let contentType = file.type;
+    if (fileName.endsWith('.ico')) {
+      contentType = 'image/x-icon';
+    } else if (fileName.endsWith('.svg')) {
+      contentType = 'image/svg+xml';
+    } else if (fileName.endsWith('.webmanifest') || fileName.endsWith('.json')) {
+      contentType = 'application/manifest+json';
+    } else if (fileName.endsWith('.png')) {
+      contentType = 'image/png';
+    }
+
+    // Upload to Supabase Storage (public bucket)
+    const { error: uploadError } = await supabase.storage
+      .from(FAVICON_BUCKET_NAME)
+      .upload(fileName, fileBuffer, {
+        contentType: contentType,
+        cacheControl: '31536000', // 1 year cache
+        upsert: true // Allow overwriting
+      });
+
+    if (uploadError) {
+      console.error('Error uploading favicon:', uploadError);
+      return c.json({ 
+        success: false, 
+        error: `Upload failed: ${uploadError.message}` 
+      }, 500);
+    }
+
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from(FAVICON_BUCKET_NAME)
+      .getPublicUrl(fileName);
+
+    console.log(`Successfully uploaded favicon: ${fileName}`);
+    return c.json({ 
+      success: true, 
+      url: urlData.publicUrl,
+      fileName: fileName
+    });
+  } catch (error) {
+    console.error('Error in favicon upload endpoint:', error);
+    return c.json({ success: false, error: String(error) }, 500);
+  }
+});
+
+// Get all favicon URLs (for dynamic injection)
+app.get("/make-server-a2e14eff/api/favicons", async (c) => {
+  try {
+    const { data: files, error } = await supabase.storage
+      .from(FAVICON_BUCKET_NAME)
+      .list('', {
+        limit: 100,
+        offset: 0,
+      });
+
+    if (error) {
+      console.error('Error listing favicons:', error);
+      return c.json({ success: false, error: error.message }, 500);
+    }
+
+    const favicons: Record<string, string> = {};
+    
+    for (const file of files || []) {
+      const { data } = supabase.storage
+        .from(FAVICON_BUCKET_NAME)
+        .getPublicUrl(file.name);
+      favicons[file.name] = data.publicUrl;
+    }
+
+    return c.json({ success: true, favicons });
+  } catch (error) {
+    console.error('Error in get favicons endpoint:', error);
+    return c.json({ success: false, error: String(error) }, 500);
   }
 });
 
