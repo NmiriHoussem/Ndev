@@ -8,11 +8,12 @@ import { supabase } from '../../../utils/supabase/client';
 import { projectId, publicAnonKey } from '../../../utils/supabase/info';
 import { SocialMediaManager } from './SocialMediaManager';
 import { FaviconManager } from './FaviconManager';
+import { OGImageManager } from './OGImageManager';
 
 const ADMIN_EMAIL = 'houssem.addin@gmail.com';
 const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-a2e14eff`;
 
-type Tab = 'logo' | 'sections' | 'content' | 'projects' | 'clients' | 'social' | 'favicons';
+type Tab = 'logo' | 'sections' | 'content' | 'projects' | 'clients' | 'social' | 'favicons' | 'ogimage';
 
 interface Section {
   id: string;
@@ -1069,6 +1070,17 @@ export function Admin() {
               <Star className="inline-block mr-2" size={20} />
               Favicons
             </button>
+            <button
+              onClick={() => setActiveTab('ogimage')}
+              className={`px-4 py-2 font-medium transition-colors border-b-2 ${
+                activeTab === 'ogimage'
+                  ? 'text-purple-400 border-purple-400'
+                  : 'text-gray-400 border-transparent hover:text-white'
+              }`}
+            >
+              <ImageIcon className="inline-block mr-2" size={20} />
+              OG Image
+            </button>
           </div>
         </div>
 
@@ -2106,6 +2118,13 @@ export function Admin() {
         {activeTab === 'favicons' && (
           <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20">
             <FaviconManager />
+          </div>
+        )}
+
+        {/* OG Image Tab */}
+        {activeTab === 'ogimage' && (
+          <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20">
+            <OGImageManager />
           </div>
         )}
       </div>

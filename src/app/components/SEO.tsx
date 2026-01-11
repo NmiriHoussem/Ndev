@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { projectId, publicAnonKey } from '../../../utils/supabase/info';
 
 interface SEOProps {
   title?: string;
@@ -8,13 +9,61 @@ interface SEOProps {
   url?: string;
 }
 
+const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-a2e14eff`;
+const DEFAULT_OG_IMAGE = 'https://images.unsplash.com/photo-1517309561013-16f6e4020305?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200&h=630';
+
 export function SEO({
   title = 'NdevDigital - Building Digital Excellence | UI/UX, Web Development & SaaS Solutions',
   description = 'Transform your digital presence with NdevDigital. Expert UI/UX design, web development, branding, SaaS products, e-learning solutions, and game development. Based in Tunis, serving clients worldwide.',
-  image = 'https://images.unsplash.com/photo-1517309561013-16f6e4020305?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200&h=630',
+  image,
   type = 'website',
   url = 'https://ndev.digital/'
 }: SEOProps) {
+  const [ogImage, setOgImage] = useState<string>(image || DEFAULT_OG_IMAGE);
+
+  useEffect(() => {
+    // Load OG image configuration if no custom image provided
+    if (!image) {
+      loadOGImage();
+    }
+
+    // Listen for OG image updates from admin panel
+    const handleOGImageUpdate = (event: any) => {
+      if (event.detail?.url) {
+        console.log('OG image updated:', event.detail.url);
+        setOgImage(event.detail.url);
+      }
+    };
+
+    window.addEventListener('og-image-updated', handleOGImageUpdate);
+
+    return () => {
+      window.removeEventListener('og-image-updated', handleOGImageUpdate);
+    };
+  }, [image]);
+
+  const loadOGImage = async () => {
+    try {
+      const response = await fetch(`${API_BASE}/og-image-config`, {
+        headers: { 'Authorization': `Bearer ${publicAnonKey}` }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.useGenerated) {
+          // Use the generated OG image endpoint
+          setOgImage(`${API_BASE}/og-image`);
+        } else if (data.customUrl) {
+          // Use custom uploaded image
+          setOgImage(data.customUrl);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading OG image config:', error);
+      // Keep default image on error
+    }
+  };
+
   useEffect(() => {
     // Update document title
     document.title = title;
@@ -23,12 +72,12 @@ export function SEO({
     updateMetaTag('name', 'description', description);
     updateMetaTag('property', 'og:title', title);
     updateMetaTag('property', 'og:description', description);
-    updateMetaTag('property', 'og:image', image);
+    updateMetaTag('property', 'og:image', ogImage);
     updateMetaTag('property', 'og:url', url);
     updateMetaTag('property', 'og:type', type);
     updateMetaTag('name', 'twitter:title', title);
     updateMetaTag('name', 'twitter:description', description);
-    updateMetaTag('name', 'twitter:image', image);
+    updateMetaTag('name', 'twitter:image', ogImage);
 
     // Update canonical URL
     let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
@@ -38,7 +87,7 @@ export function SEO({
       document.head.appendChild(canonical);
     }
     canonical.href = url;
-  }, [title, description, image, type, url]);
+  }, [title, description, ogImage, type, url]);
 
   return null;
 }

@@ -14,6 +14,7 @@ const supabase = createClient(
 // Create storage buckets on startup
 const BUCKET_NAME = 'make-a2e14eff-projects';
 const FAVICON_BUCKET_NAME = 'make-a2e14eff-favicons';
+const OG_IMAGE_BUCKET_NAME = 'make-a2e14eff-og-images';
 
 async function initializeStorage() {
   try {
@@ -57,6 +58,23 @@ async function initializeStorage() {
         console.error('Error creating favicon bucket:', error);
       } else if (!error) {
         console.log(`Favicon bucket "${FAVICON_BUCKET_NAME}" created successfully`);
+      }
+    }
+
+    // Create public OG images bucket
+    const ogImageBucketExists = buckets?.some(bucket => bucket.name === OG_IMAGE_BUCKET_NAME);
+    if (!ogImageBucketExists) {
+      const { error } = await supabase.storage.createBucket(OG_IMAGE_BUCKET_NAME, {
+        public: true, // Public access for OG images
+        fileSizeLimit: 5242880, // 5MB
+        allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+      });
+      
+      if (error && error.statusCode !== '409') {
+        // Only log error if it's not "already exists" (409)
+        console.error('Error creating OG image bucket:', error);
+      } else if (!error) {
+        console.log(`OG image bucket "${OG_IMAGE_BUCKET_NAME}" created successfully`);
       }
     }
   } catch (error) {
@@ -965,6 +983,197 @@ app.get("/make-server-a2e14eff/favicon/:filename", async (c) => {
     });
   } catch (error) {
     console.error('Error serving favicon:', error);
+    return c.json({ success: false, error: String(error) }, 500);
+  }
+});
+
+// OG Image Management endpoints
+// Upload OG Image
+app.post("/make-server-a2e14eff/upload-og-image", async (c) => {
+  try {
+    const formData = await c.req.formData();
+    const file = formData.get('file') as File;
+    
+    if (!file) {
+      return c.json({ success: false, error: 'No file provided' }, 400);
+    }
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      return c.json({ 
+        success: false, 
+        error: 'Invalid file type. Only JPEG, PNG, and WebP are allowed.' 
+      }, 400);
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5242880) {
+      return c.json({ 
+        success: false, 
+        error: 'File too large. Maximum size is 5MB.' 
+      }, 400);
+    }
+
+    // Use fixed filename to always overwrite
+    const fileName = 'og-image.png';
+
+    // Convert file to ArrayBuffer
+    const arrayBuffer = await file.arrayBuffer();
+    const fileBuffer = new Uint8Array(arrayBuffer);
+
+    // Upload to Supabase Storage (public bucket)
+    const { error: uploadError } = await supabase.storage
+      .from(OG_IMAGE_BUCKET_NAME)
+      .upload(fileName, fileBuffer, {
+        contentType: file.type,
+        cacheControl: '3600',
+        upsert: true // Overwrite existing
+      });
+
+    if (uploadError) {
+      console.error('Error uploading OG image:', uploadError);
+      return c.json({ 
+        success: false, 
+        error: `Upload failed: ${uploadError.message}` 
+      }, 500);
+    }
+
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from(OG_IMAGE_BUCKET_NAME)
+      .getPublicUrl(fileName);
+
+    // Store URL in KV for easy access
+    await kv.set('og-image-url', urlData.publicUrl);
+    await kv.set('og-image-use-generated', false);
+
+    console.log(`Successfully uploaded OG image: ${fileName}`);
+    return c.json({ 
+      success: true, 
+      url: urlData.publicUrl
+    });
+  } catch (error) {
+    console.error('Error in OG image upload endpoint:', error);
+    return c.json({ success: false, error: String(error) }, 500);
+  }
+});
+
+// Get OG image configuration
+app.get("/make-server-a2e14eff/og-image-config", async (c) => {
+  try {
+    const useGenerated = await kv.get('og-image-use-generated');
+    const customUrl = await kv.get('og-image-url');
+    
+    return c.json({ 
+      success: true,
+      useGenerated: useGenerated === true,
+      customUrl: customUrl || null
+    });
+  } catch (error) {
+    console.error('Error getting OG image config:', error);
+    return c.json({ success: false, error: String(error) }, 500);
+  }
+});
+
+// Set OG image configuration
+app.post("/make-server-a2e14eff/set-og-image-config", async (c) => {
+  try {
+    const body = await c.req.json();
+    const { useGenerated } = body;
+    
+    await kv.set('og-image-use-generated', useGenerated === true);
+    
+    return c.json({ success: true });
+  } catch (error) {
+    console.error('Error setting OG image config:', error);
+    return c.json({ success: false, error: String(error) }, 500);
+  }
+});
+
+// Dynamic OG Image Generator
+app.get("/make-server-a2e14eff/og-image", async (c) => {
+  try {
+    // Generate a beautiful OG image using HTML Canvas
+    // Since we can't use canvas directly in Deno, we'll create SVG that can be converted
+    
+    const svg = `
+    <svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#0A0A0F;stop-opacity:1" />
+          <stop offset="50%" style="stop-color:#1A1A2E;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#0F0F1A;stop-opacity:1" />
+        </linearGradient>
+        <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#5865F2;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
+        </linearGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="15" result="coloredBlur"/>
+          <feMerge>
+            <feMergeNode in="coloredBlur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+      
+      <!-- Background -->
+      <rect width="1200" height="630" fill="url(#bg)"/>
+      
+      <!-- Decorative circles with glow -->
+      <circle cx="200" cy="150" r="100" fill="#5865F2" opacity="0.1" filter="url(#glow)"/>
+      <circle cx="1000" cy="480" r="120" fill="#8B5CF6" opacity="0.1" filter="url(#glow)"/>
+      
+      <!-- Top accent bar -->
+      <rect width="1200" height="8" fill="url(#accent)"/>
+      
+      <!-- Main content -->
+      <text x="600" y="220" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="white" text-anchor="middle">
+        NdevDigital
+      </text>
+      
+      <text x="600" y="300" font-family="Arial, sans-serif" font-size="36" fill="#B4B4B4" text-anchor="middle">
+        Building Digital Excellence
+      </text>
+      
+      <!-- Service pills -->
+      <g transform="translate(600, 370)">
+        <!-- UI/UX Design -->
+        <rect x="-280" y="0" width="140" height="40" rx="20" fill="#5865F2" opacity="0.2"/>
+        <text x="-210" y="27" font-family="Arial, sans-serif" font-size="16" fill="#5865F2" text-anchor="middle">UI/UX Design</text>
+        
+        <!-- Web Dev -->
+        <rect x="-120" y="0" width="120" height="40" rx="20" fill="#8B5CF6" opacity="0.2"/>
+        <text x="-60" y="27" font-family="Arial, sans-serif" font-size="16" fill="#8B5CF6" text-anchor="middle">Web Dev</text>
+        
+        <!-- SaaS -->
+        <rect x="20" y="0" width="80" height="40" rx="20" fill="#5865F2" opacity="0.2"/>
+        <text x="60" y="27" font-family="Arial, sans-serif" font-size="16" fill="#5865F2" text-anchor="middle">SaaS</text>
+        
+        <!-- E-Learning -->
+        <rect x="120" y="0" width="120" height="40" rx="20" fill="#8B5CF6" opacity="0.2"/>
+        <text x="180" y="27" font-family="Arial, sans-serif" font-size="16" fill="#8B5CF6" text-anchor="middle">E-Learning</text>
+      </g>
+      
+      <!-- Bottom info -->
+      <text x="600" y="550" font-family="Arial, sans-serif" font-size="24" fill="#808080" text-anchor="middle">
+        📧 ndevdigital@sent.com  •  📍 Tunis, Tunisia
+      </text>
+    </svg>
+    `;
+
+    // Return SVG as PNG-compatible response
+    // For true PNG, you'd need a canvas library, but SVG works for most social platforms
+    return new Response(svg, {
+      headers: {
+        'Content-Type': 'image/svg+xml',
+        'Cache-Control': 'public, max-age=3600',
+        'Access-Control-Allow-Origin': '*',
+      },
+    });
+  } catch (error) {
+    console.error('Error generating OG image:', error);
     return c.json({ success: false, error: String(error) }, 500);
   }
 });
