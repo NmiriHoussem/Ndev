@@ -594,4 +594,171 @@ app.post("/make-server-a2e14eff/social-media", async (c) => {
   }
 });
 
+// Contact form endpoint with spam protection
+app.post("/make-server-a2e14eff/contact", async (c) => {
+  try {
+    const body = await c.req.json();
+    let { name, email, company, message } = body;
+
+    // Trim all fields
+    name = name?.trim();
+    email = email?.trim();
+    company = company?.trim();
+    message = message?.trim();
+
+    // Validation
+    if (!name || !email || !message) {
+      return c.json({ 
+        success: false, 
+        error: 'Name, email, and message are required' 
+      }, 400);
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return c.json({ 
+        success: false, 
+        error: 'Invalid email address' 
+      }, 400);
+    }
+
+    // Spam protection: Rate limiting using KV store
+    const rateLimitKey = `contact_rate_limit:${email}`;
+    const lastSubmission = await kv.get(rateLimitKey);
+    
+    if (lastSubmission) {
+      const lastTime = new Date(lastSubmission).getTime();
+      const now = new Date().getTime();
+      const timeDiff = now - lastTime;
+      
+      // Allow only one submission per 5 minutes
+      if (timeDiff < 5 * 60 * 1000) {
+        const remainingTime = Math.ceil((5 * 60 * 1000 - timeDiff) / 1000 / 60);
+        return c.json({ 
+          success: false, 
+          error: `Please wait ${remainingTime} minute(s) before submitting again` 
+        }, 429);
+      }
+    }
+
+    // Basic spam detection
+    const spamKeywords = ['viagra', 'casino', 'lottery', 'winner', 'congratulations', 'click here', 'buy now'];
+    const messageText = `${name} ${email} ${company || ''} ${message}`.toLowerCase();
+    const containsSpam = spamKeywords.some(keyword => messageText.includes(keyword));
+    
+    if (containsSpam) {
+      console.log(`Spam detected from ${email}`);
+      return c.json({ 
+        success: false, 
+        error: 'Message flagged as spam' 
+      }, 400);
+    }
+
+    // Check for suspicious patterns - reduced minimum to 5 characters
+    if (message.length < 5) {
+      return c.json({ 
+        success: false, 
+        error: 'Message must be at least 5 characters' 
+      }, 400);
+    }
+
+    if (message.length > 5000) {
+      return c.json({ 
+        success: false, 
+        error: 'Message is too long (maximum 5000 characters)' 
+      }, 400);
+    }
+
+    // Send email using Resend
+    const resendApiKey = Deno.env.get('RESEND_API_KEY');
+    
+    if (!resendApiKey) {
+      console.error('RESEND_API_KEY environment variable is not set');
+      console.error('Available env vars:', Object.keys(Deno.env.toObject()));
+      return c.json({ 
+        success: false, 
+        error: 'Email service not configured. Please contact the administrator.' 
+      }, 500);
+    }
+
+    console.log('Resend API Key found, attempting to send email...');
+
+    const emailResponse = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${resendApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: 'NdevDigital Contact Form <onboarding@resend.dev>',
+        to: ['houssem.addin@gmail.com'],
+        subject: `New Contact Form Submission from ${name}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #8B5CF6; border-bottom: 2px solid #8B5CF6; padding-bottom: 10px;">
+              New Contact Form Submission
+            </h2>
+            
+            <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+              <p style="margin: 10px 0;"><strong>Name:</strong> ${name}</p>
+              <p style="margin: 10px 0;"><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
+              ${company ? `<p style="margin: 10px 0;"><strong>Company:</strong> ${company}</p>` : ''}
+            </div>
+            
+            <div style="margin: 20px 0;">
+              <h3 style="color: #333;">Message:</h3>
+              <p style="background-color: #f9f9f9; padding: 15px; border-left: 4px solid #8B5CF6; border-radius: 4px; line-height: 1.6;">
+                ${message.replace(/\n/g, '<br>')}
+              </p>
+            </div>
+            
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 12px;">
+              <p>This email was sent from the NdevDigital contact form.</p>
+              <p>Submitted at: ${new Date().toLocaleString('en-US', { timeZone: 'Africa/Tunis' })} (Tunisia Time)</p>
+            </div>
+          </div>
+        `,
+      }),
+    });
+
+    if (!emailResponse.ok) {
+      const errorData = await emailResponse.json();
+      console.error('Error sending email via Resend:', errorData);
+      return c.json({ 
+        success: false, 
+        error: 'Failed to send email. Please try again later or contact us directly.' 
+      }, 500);
+    }
+
+    // Update rate limit
+    await kv.set(rateLimitKey, new Date().toISOString());
+
+    // Store the submission in KV for record keeping (optional)
+    const submissionId = crypto.randomUUID();
+    await kv.set(`contact_submission:${submissionId}`, {
+      id: submissionId,
+      name,
+      email,
+      company,
+      message,
+      submittedAt: new Date().toISOString(),
+      ipAddress: c.req.header('x-forwarded-for') || 'unknown',
+    });
+
+    console.log(`Contact form submission from ${name} (${email}) sent successfully`);
+    
+    return c.json({ 
+      success: true, 
+      message: 'Your message has been sent successfully! We will get back to you soon.' 
+    });
+  } catch (error) {
+    console.error('Error processing contact form:', error);
+    return c.json({ 
+      success: false, 
+      error: 'An unexpected error occurred. Please try again later.' 
+    }, 500);
+  }
+});
+
 Deno.serve(app.fetch);

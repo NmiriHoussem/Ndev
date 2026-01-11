@@ -1,10 +1,11 @@
 import { motion } from 'motion/react';
-import { Mail, Phone, MapPin, Send, MessageCircle, Calendar } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, MessageCircle, Calendar, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Card, CardContent } from './ui/card';
 import { useState } from 'react';
+import { projectId, publicAnonKey } from '../../../utils/supabase/info';
 
 const contactInfo = [
   {
@@ -38,12 +39,51 @@ export function Contact() {
     message: '',
   });
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    alert('Thank you for your message! We\'ll get back to you soon.');
-    setFormData({ name: '', email: '', company: '', message: '' });
+    setLoading(true);
+    setError(false);
+    setSuccess(false);
+
+    try {
+      const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server-a2e14eff/contact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${publicAnonKey}`,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setSuccess(true);
+        setFormData({ name: '', email: '', company: '', message: '' });
+        console.log('Contact form submitted successfully');
+      } else {
+        setError(true);
+        const errorMessage = data.error || 'Failed to send message. Please try again.';
+        console.error('Contact form submission failed:', errorMessage);
+        
+        // Special handling for API key errors
+        if (errorMessage.includes('Email service not configured') || errorMessage.includes('Failed to send email')) {
+          alert('⚠️ Email service is not properly configured.\n\nPlease contact the administrator or reach out directly:\n📧 Email: contact@ndev.digital\n📞 Phone: +216 54 882 779');
+        } else {
+          alert(errorMessage);
+        }
+      }
+    } catch (err) {
+      setError(true);
+      console.error('Error submitting contact form:', err);
+      alert('An unexpected error occurred. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -315,12 +355,32 @@ export function Contact() {
                       className="w-full bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 hover:shadow-2xl hover:shadow-purple-500/50 text-white py-6 text-lg border-0 relative overflow-hidden group"
                     >
                       <span className="relative z-10 flex items-center justify-center gap-2">
-                        Send Message
-                        <Send size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                        {loading ? (
+                          <Loader2 size={20} className="animate-spin" />
+                        ) : (
+                          <>
+                            Send Message
+                            <Send size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                          </>
+                        )}
                       </span>
                       <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     </Button>
                   </motion.div>
+
+                  {success && (
+                    <div className="mt-4 text-sm text-green-500 flex items-center gap-2">
+                      <CheckCircle size={16} />
+                      Thank you for your message! We'll get back to you soon.
+                    </div>
+                  )}
+
+                  {error && (
+                    <div className="mt-4 text-sm text-red-500 flex items-center gap-2">
+                      <AlertCircle size={16} />
+                      An error occurred. Please try again later.
+                    </div>
+                  )}
                 </form>
               </div>
             </div>
