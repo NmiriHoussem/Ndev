@@ -225,21 +225,19 @@ export function OGImageManager() {
           <p className="text-gray-400 text-sm mb-4">
             Upload your own branded OG image for full control
           </p>
-          <label className="block">
-            <input
-              type="file"
-              accept="image/png,image/jpeg,image/jpg"
-              onChange={handleFileSelect}
-              disabled={uploading}
-              className="hidden"
-            />
-            <Button
-              disabled={uploading}
-              className="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
-            >
-              <Upload size={18} className="mr-2" />
+          <input
+            type="file"
+            accept="image/png,image/jpeg,image/jpg"
+            onChange={handleFileSelect}
+            disabled={uploading}
+            className="hidden"
+            id="og-image-upload"
+          />
+          <label htmlFor="og-image-upload">
+            <div className={`w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 cursor-pointer transition-all ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+              <Upload size={18} />
               {uploading ? 'Uploading...' : 'Choose Image'}
-            </Button>
+            </div>
           </label>
         </div>
 
