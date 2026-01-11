@@ -1091,6 +1091,45 @@ app.post("/make-server-a2e14eff/set-og-image-config", async (c) => {
   }
 });
 
+// Proxy endpoint for OG image - ensures proper headers for social media
+app.get("/make-server-a2e14eff/og-image-proxy", async (c) => {
+  try {
+    // Check if using custom image
+    const customUrl = await kv.get('og-image-url');
+    
+    if (customUrl) {
+      // Fetch the image from Supabase Storage
+      const response = await fetch(customUrl);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.statusText}`);
+      }
+      
+      // Get the image data
+      const imageData = await response.arrayBuffer();
+      
+      // Return with proper headers (no range requests, full content)
+      return new Response(imageData, {
+        status: 200,
+        headers: {
+          'Content-Type': 'image/png',
+          'Content-Length': imageData.byteLength.toString(),
+          'Cache-Control': 'public, max-age=3600',
+          'Access-Control-Allow-Origin': '*',
+          'Accept-Ranges': 'none', // Disable range requests
+        },
+      });
+    }
+    
+    // Fallback to generated image endpoint if no custom image
+    return c.redirect('/make-server-a2e14eff/og-image');
+  } catch (error) {
+    console.error('Error proxying OG image:', error);
+    // Fallback to generated image
+    return c.redirect('/make-server-a2e14eff/og-image');
+  }
+});
+
 // Dynamic OG Image Generator
 app.get("/make-server-a2e14eff/og-image", async (c) => {
   try {
