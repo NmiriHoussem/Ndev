@@ -172,7 +172,27 @@ export function OGImageManager() {
     setMessage(null);
 
     try {
-      console.log('🎨 Switching to pasted URL...');
+      const url = pastedUrl.trim();
+      
+      // Validate URL format
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        throw new Error('URL must start with http:// or https://');
+      }
+      
+      // Check if it's a direct image URL
+      const imageExtensions = ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
+      const hasImageExtension = imageExtensions.some(ext => url.toLowerCase().includes(ext));
+      
+      if (!hasImageExtension) {
+        throw new Error('URL must be a direct image link ending in .png, .jpg, .jpeg, .webp, or .gif. For Imgur, right-click the image and select "Copy image address" to get the direct URL (should start with i.imgur.com).');
+      }
+      
+      // Check for common mistakes
+      if (url.includes('imgur.com/a/') || url.includes('imgur.com/gallery/')) {
+        throw new Error('This is an Imgur album/gallery URL. Right-click the image itself and select "Copy image address" to get the direct image URL (should start with i.imgur.com).');
+      }
+      
+      console.log('🎨 Switching to pasted URL...', url);
 
       const response = await fetch(`${API_BASE}/set-og-image-config`, {
         method: 'POST',
@@ -180,19 +200,23 @@ export function OGImageManager() {
           'Authorization': `Bearer ${publicAnonKey}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ useGenerated: false, customUrl: pastedUrl })
+        body: JSON.stringify({ 
+          useGenerated: false,
+          customUrl: url 
+        })
       });
 
       if (!response.ok) {
-        throw new Error('Failed to set OG image config');
+        throw new Error('Failed to set custom URL');
       }
 
-      setOgImageUrl(pastedUrl);
-      setPreviewUrl(pastedUrl);
+      setOgImageUrl(url);
+      setPreviewUrl(url);
       setUseGenerated(false);
-      setMessage({ type: 'success', text: 'Now using pasted URL as OG image!' });
+      setPastedUrl(''); // Clear input
+      setMessage({ type: 'success', text: 'Custom URL set successfully! Clear Facebook cache to see changes.' });
 
-      window.dispatchEvent(new CustomEvent('og-image-updated', { detail: { url: pastedUrl } }));
+      window.dispatchEvent(new CustomEvent('og-image-updated', { detail: { url } }));
 
     } catch (error: any) {
       console.error('❌ Error:', error);
@@ -311,7 +335,7 @@ export function OGImageManager() {
             type="url"
             value={pastedUrl}
             onChange={(e) => setPastedUrl(e.target.value)}
-            placeholder="https://i.ibb.co/..."
+            placeholder="https://i.ibb.co/xxxxx/image.png (must be direct image URL)"
             disabled={uploading}
             className="flex-1 bg-white/5 border border-white/20 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors"
           />
