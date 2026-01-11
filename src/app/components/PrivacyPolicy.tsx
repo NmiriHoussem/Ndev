@@ -174,7 +174,7 @@ export function PrivacyPolicy() {
                 </p>
                 <div className="mt-4 p-4 bg-white/5 rounded-lg border border-white/10">
                   <p className="text-white">
-                    <strong>Email:</strong> contact@ndev.digital<br />
+                    <strong>Email:</strong> ndevdigital@sent.com<br />
                     <strong>Address:</strong> Immeuble Tamayouz 1082 Centre Urbain Nord-Tunis
                   </p>
                 </div>

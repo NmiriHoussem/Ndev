@@ -11,8 +11,8 @@ const contactInfo = [
   {
     icon: Mail,
     title: 'Email',
-    value: 'contact@ndev.digital',
-    link: 'mailto:contact@ndev.digital',
+    value: 'ndevdigital@sent.com',
+    link: 'mailto:ndevdigital@sent.com',
     gradient: 'from-blue-500 to-cyan-500',
   },
   {
@@ -69,7 +69,7 @@ export function Contact() {
         
         // Special handling for API key errors
         if (errorMessage.includes('Email service not configured') || errorMessage.includes('Failed to send email')) {
-          alert('⚠️ Email service is not properly configured.\n\nPlease contact the administrator or reach out directly:\n📧 Email: contact@ndev.digital\n📞 Phone: +216 54 882 779');
+          alert('⚠️ Email service is not properly configured.\n\nPlease contact the administrator or reach out directly:\n📧 Email: ndevdigital@sent.com\n📞 Phone: +216 54 882 779');
         } else {
           alert(errorMessage);
         }
