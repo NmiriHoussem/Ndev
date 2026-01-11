@@ -1080,9 +1080,15 @@ app.get("/make-server-a2e14eff/og-image-config", async (c) => {
 app.post("/make-server-a2e14eff/set-og-image-config", async (c) => {
   try {
     const body = await c.req.json();
-    const { useGenerated } = body;
+    const { useGenerated, customUrl } = body;
     
     await kv.set('og-image-use-generated', useGenerated === true);
+    
+    // If a custom URL is provided, store it
+    if (customUrl) {
+      await kv.set('og-image-url', customUrl);
+      console.log('[OG Config] Set custom URL:', customUrl);
+    }
     
     return c.json({ success: true });
   } catch (error) {
@@ -1094,19 +1100,29 @@ app.post("/make-server-a2e14eff/set-og-image-config", async (c) => {
 // Proxy endpoint for OG image - ensures proper headers for social media
 app.get("/make-server-a2e14eff/og-image-proxy", async (c) => {
   try {
+    console.log('[OG Image Proxy] Checking for custom image...');
+    
     // Check if using custom image
+    const useGenerated = await kv.get('og-image-use-generated');
     const customUrl = await kv.get('og-image-url');
     
-    if (customUrl) {
+    console.log('[OG Image Proxy] useGenerated:', useGenerated);
+    console.log('[OG Image Proxy] customUrl:', customUrl);
+    
+    if (!useGenerated && customUrl) {
+      console.log('[OG Image Proxy] Fetching custom image from:', customUrl);
+      
       // Fetch the image from Supabase Storage
       const response = await fetch(customUrl);
       
       if (!response.ok) {
+        console.error('[OG Image Proxy] Failed to fetch custom image:', response.status, response.statusText);
         throw new Error(`Failed to fetch image: ${response.statusText}`);
       }
       
       // Get the image data
       const imageData = await response.arrayBuffer();
+      console.log('[OG Image Proxy] Successfully fetched custom image, size:', imageData.byteLength, 'bytes');
       
       // Return with proper headers (no range requests, full content)
       return new Response(imageData, {
@@ -1121,12 +1137,104 @@ app.get("/make-server-a2e14eff/og-image-proxy", async (c) => {
       });
     }
     
-    // Fallback to generated image endpoint if no custom image
-    return c.redirect('/make-server-a2e14eff/og-image');
+    // Return generated SVG image (don't redirect, return directly)
+    console.log('[OG Image Proxy] Returning generated SVG image');
+    
+    const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0A0A0F;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1A1A2E;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0F0F1A;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#5865F2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="15" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  
+  <!-- Decorative circles with glow -->
+  <circle cx="200" cy="150" r="100" fill="#5865F2" opacity="0.1" filter="url(#glow)"/>
+  <circle cx="1000" cy="480" r="120" fill="#8B5CF6" opacity="0.1" filter="url(#glow)"/>
+  
+  <!-- Top accent bar -->
+  <rect width="1200" height="8" fill="url(#accent)"/>
+  
+  <!-- Main content -->
+  <text x="600" y="220" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="white" text-anchor="middle">
+    NdevDigital
+  </text>
+  
+  <text x="600" y="300" font-family="Arial, sans-serif" font-size="36" fill="#B4B4B4" text-anchor="middle">
+    Building Digital Excellence
+  </text>
+  
+  <!-- Service pills -->
+  <g transform="translate(600, 370)">
+    <!-- UI/UX Design -->
+    <rect x="-280" y="0" width="140" height="40" rx="20" fill="#5865F2" opacity="0.2"/>
+    <text x="-210" y="27" font-family="Arial, sans-serif" font-size="16" fill="#5865F2" text-anchor="middle">UI/UX Design</text>
+    
+    <!-- Web Dev -->
+    <rect x="-120" y="0" width="120" height="40" rx="20" fill="#8B5CF6" opacity="0.2"/>
+    <text x="-60" y="27" font-family="Arial, sans-serif" font-size="16" fill="#8B5CF6" text-anchor="middle">Web Dev</text>
+    
+    <!-- SaaS -->
+    <rect x="20" y="0" width="80" height="40" rx="20" fill="#5865F2" opacity="0.2"/>
+    <text x="60" y="27" font-family="Arial, sans-serif" font-size="16" fill="#5865F2" text-anchor="middle">SaaS</text>
+    
+    <!-- E-Learning -->
+    <rect x="120" y="0" width="120" height="40" rx="20" fill="#8B5CF6" opacity="0.2"/>
+    <text x="180" y="27" font-family="Arial, sans-serif" font-size="16" fill="#8B5CF6" text-anchor="middle">E-Learning</text>
+  </g>
+  
+  <!-- Bottom info -->
+  <text x="600" y="550" font-family="Arial, sans-serif" font-size="24" fill="#808080" text-anchor="middle">
+    ndevdigital@sent.com • Tunis, Tunisia
+  </text>
+</svg>`;
+
+    return new Response(svg, {
+      status: 200,
+      headers: {
+        'Content-Type': 'image/svg+xml',
+        'Content-Length': svg.length.toString(),
+        'Cache-Control': 'public, max-age=3600',
+        'Access-Control-Allow-Origin': '*',
+        'Accept-Ranges': 'none',
+      },
+    });
   } catch (error) {
-    console.error('Error proxying OG image:', error);
-    // Fallback to generated image
-    return c.redirect('/make-server-a2e14eff/og-image');
+    console.error('[OG Image Proxy] Error:', error);
+    
+    // Return a simple fallback SVG on error
+    const fallbackSvg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#0A0A0F"/>
+  <text x="600" y="315" font-family="Arial, sans-serif" font-size="64" font-weight="bold" fill="white" text-anchor="middle">
+    NdevDigital
+  </text>
+</svg>`;
+    
+    return new Response(fallbackSvg, {
+      status: 200,
+      headers: {
+        'Content-Type': 'image/svg+xml',
+        'Cache-Control': 'public, max-age=60',
+        'Access-Control-Allow-Origin': '*',
+      },
+    });
   }
 });
 

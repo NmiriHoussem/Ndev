@@ -14,6 +14,7 @@ export function OGImageManager() {
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [useGenerated, setUseGenerated] = useState(false);
+  const [pastedUrl, setPastedUrl] = useState<string>('');
 
   useEffect(() => {
     loadCurrentOGImage();
@@ -166,6 +167,41 @@ export function OGImageManager() {
     }
   };
 
+  const usePastedUrl = async () => {
+    setUploading(true);
+    setMessage(null);
+
+    try {
+      console.log('🎨 Switching to pasted URL...');
+
+      const response = await fetch(`${API_BASE}/set-og-image-config`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${publicAnonKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ useGenerated: false, customUrl: pastedUrl })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to set OG image config');
+      }
+
+      setOgImageUrl(pastedUrl);
+      setPreviewUrl(pastedUrl);
+      setUseGenerated(false);
+      setMessage({ type: 'success', text: 'Now using pasted URL as OG image!' });
+
+      window.dispatchEvent(new CustomEvent('og-image-updated', { detail: { url: pastedUrl } }));
+
+    } catch (error: any) {
+      console.error('❌ Error:', error);
+      setMessage({ type: 'error', text: error.message });
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-xl p-6 border border-purple-500/30">
@@ -258,6 +294,38 @@ export function OGImageManager() {
             <Wand2 size={18} className="mr-2" />
             {uploading ? 'Switching...' : 'Use Generated'}
           </Button>
+        </div>
+      </div>
+
+      {/* Option 3: Paste URL */}
+      <div className="bg-white/10 backdrop-blur-xl rounded-xl p-6 border border-white/20">
+        <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <ImageIcon size={20} />
+          Use Image URL (Recommended)
+        </h4>
+        <p className="text-gray-400 text-sm mb-4">
+          Paste a direct image URL from imgbb, imgur, or any public image host. This is the most reliable method!
+        </p>
+        <div className="flex gap-3">
+          <input
+            type="url"
+            value={pastedUrl}
+            onChange={(e) => setPastedUrl(e.target.value)}
+            placeholder="https://i.ibb.co/..."
+            disabled={uploading}
+            className="flex-1 bg-white/5 border border-white/20 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors"
+          />
+          <Button
+            onClick={usePastedUrl}
+            disabled={uploading || !pastedUrl.trim() || !pastedUrl.startsWith('http')}
+            className="bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600"
+          >
+            <Check size={18} className="mr-2" />
+            {uploading ? 'Setting...' : 'Use URL'}
+          </Button>
+        </div>
+        <div className="mt-3 text-xs text-gray-400">
+          <p>💡 <strong>Tip:</strong> Upload your image to <a href="https://imgbb.com/" target="_blank" rel="noopener noreferrer" className="text-purple-400 underline hover:text-purple-300">imgbb.com</a> or <a href="https://imgur.com/" target="_blank" rel="noopener noreferrer" className="text-purple-400 underline hover:text-purple-300">imgur.com</a>, then paste the direct image URL here.</p>
         </div>
       </div>
 
