@@ -72,8 +72,8 @@ export async function loadAndInjectFavicons() {
       const link = document.createElement('link');
       link.rel = config.rel;
       
-      // Use the proxy endpoint instead of direct URL
-      link.href = `${API_BASE}/favicon/${filename}`;
+      // Use the direct public URL from Supabase Storage (bucket is public)
+      link.href = url; // Direct URL, not proxy
       
       if (config.type) link.type = config.type;
       if (config.sizes) link.sizes.value = config.sizes;

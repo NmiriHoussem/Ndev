@@ -891,6 +891,8 @@ app.post("/make-server-a2e14eff/api/favicons/upload", async (c) => {
 // Get all favicon URLs (for dynamic injection)
 app.get("/make-server-a2e14eff/api/favicons", async (c) => {
   try {
+    console.log('[Favicons API] Listing files from bucket:', FAVICON_BUCKET_NAME);
+    
     const { data: files, error } = await supabase.storage
       .from(FAVICON_BUCKET_NAME)
       .list('', {
@@ -899,10 +901,11 @@ app.get("/make-server-a2e14eff/api/favicons", async (c) => {
       });
 
     if (error) {
-      console.error('Error listing favicons:', error);
+      console.error('[Favicons API] Error listing favicons:', error);
       return c.json({ success: false, error: error.message }, 500);
     }
 
+    console.log('[Favicons API] Found files:', files);
     const favicons: Record<string, string> = {};
     
     for (const file of files || []) {
@@ -911,11 +914,13 @@ app.get("/make-server-a2e14eff/api/favicons", async (c) => {
         .from(FAVICON_BUCKET_NAME)
         .getPublicUrl(file.name);
       favicons[file.name] = data.publicUrl;
+      console.log('[Favicons API] Added favicon:', file.name, '→', data.publicUrl);
     }
 
+    console.log('[Favicons API] Returning', Object.keys(favicons).length, 'favicons');
     return c.json({ success: true, favicons });
   } catch (error) {
-    console.error('Error in favicons endpoint:', error);
+    console.error('[Favicons API] Error in favicons endpoint:', error);
     return c.json({ success: false, error: String(error) }, 500);
   }
 });
