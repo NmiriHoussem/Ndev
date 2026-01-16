@@ -128,7 +128,7 @@ export const SEOConfigs = {
   },
   contact: {
     title: 'Contact Us - Let\'s Build Something Amazing | NdevDigital',
-    description: 'Get in touch with NdevDigital. Located in Tunis, Tunisia. Email: ndevdigital@sent.com | Phone: +216 54 882 779. Let\'s discuss your project.',
+    description: 'Get in touch with NdevDigital. Located in Tunis, Tunisia. Email: contact@ndev.digital | Phone: +216 54 882 779. Let\'s discuss your project.',
     url: 'https://ndev.digital/#contact',
   },
   privacy: {

@@ -217,11 +217,11 @@ export function Footer() {
             <ul className="space-y-4 mb-6">
               <li>
                 <a 
-                  href="mailto:ndevdigital@sent.com"
+                  href="mailto:contact@ndev.digital"
                   className="text-gray-300 hover:text-white transition-colors flex items-center gap-3 group"
                 >
                   <Mail size={18} className="text-purple-400 group-hover:text-purple-300 transition-colors" />
-                  <span className="text-sm">ndevdigital@sent.com</span>
+                  <span className="text-sm">contact@ndev.digital</span>
                 </a>
               </li>
               <li>

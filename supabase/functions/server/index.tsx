@@ -1201,7 +1201,7 @@ app.get("/make-server-a2e14eff/og-image-proxy", async (c) => {
   
   <!-- Bottom info -->
   <text x="600" y="550" font-family="Arial, sans-serif" font-size="24" fill="#808080" text-anchor="middle">
-    ndevdigital@sent.com • Tunis, Tunisia
+    contact@ndev.digital • Tunis, Tunisia
   </text>
 </svg>`;
 
@@ -1305,7 +1305,7 @@ app.get("/make-server-a2e14eff/og-image", async (c) => {
   
   <!-- Bottom info -->
   <text x="600" y="550" font-family="Arial, sans-serif" font-size="24" fill="#808080" text-anchor="middle">
-    ndevdigital@sent.com • Tunis, Tunisia
+    contact@ndev.digital • Tunis, Tunisia
   </text>
 </svg>`;
 
