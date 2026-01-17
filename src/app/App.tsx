@@ -69,10 +69,10 @@ export default function App() {
       <Header />
       <main>
         <Hero />
+        <Clients />
         <Services />
         <About />
         <Portfolio />
-        <Clients />
         <Contact />
       </main>
       <Footer />
