@@ -76,10 +76,22 @@ export function Header() {
   }, []);
 
   const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      setIsMobileMenuOpen(false);
+    const currentPath = window.location.pathname;
+    
+    // If we're on the home page, just scroll
+    if (currentPath === '/' || currentPath === '') {
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        setIsMobileMenuOpen(false);
+      }
+    } else {
+      // If we're on another page, redirect to home with hash
+      if (id === 'home') {
+        window.location.href = '/';
+      } else {
+        window.location.href = `/#${id}`;
+      }
     }
   };
 

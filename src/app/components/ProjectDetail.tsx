@@ -11,6 +11,14 @@ const publicAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 
 const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-a2e14eff`;
 
+// Helper function to generate SEO-friendly slug from title
+function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 interface ProjectDetailData {
   id: string;
   title: string;
@@ -43,6 +51,7 @@ interface ProjectDetailData {
   };
   gallery?: string[];
   keyFeatures?: string[];
+  slug?: string;
 }
 
 interface ProjectDetailProps {
@@ -72,7 +81,19 @@ export function ProjectDetail({ projectId, onBack }: ProjectDetailProps) {
         const data = await response.json();
         
         if (data.success && data.projects) {
-          const foundProject = data.projects.find((p: any) => p.id === projectId);
+          // Try to find project by slug first, then by id, then by generated slug from title
+          let foundProject = data.projects.find((p: any) => p.slug === projectId);
+          
+          if (!foundProject) {
+            // Try matching by generated slug from title
+            foundProject = data.projects.find((p: any) => generateSlug(p.title) === projectId);
+          }
+          
+          if (!foundProject) {
+            // Fallback to id match (for backward compatibility)
+            foundProject = data.projects.find((p: any) => p.id === projectId);
+          }
+          
           if (foundProject) {
             setProject(foundProject);
           }

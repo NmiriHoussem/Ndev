@@ -28,6 +28,23 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
+  // Handle hash navigation on home page
+  useEffect(() => {
+    if (currentPath === '/' || currentPath === '') {
+      const hash = window.location.hash;
+      if (hash) {
+        // Wait for page to render, then scroll to section
+        setTimeout(() => {
+          const id = hash.replace('#', '');
+          const element = document.getElementById(id);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
+      }
+    }
+  }, [currentPath]);
+
   // Navigation helper
   const navigateTo = (path: string) => {
     window.history.pushState({}, '', path);

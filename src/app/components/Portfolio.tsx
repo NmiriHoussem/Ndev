@@ -11,6 +11,14 @@ const publicAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 
 const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-a2e14eff`;
 
+// Helper function to generate SEO-friendly slug from title
+function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 interface Project {
   id: string;
   title: string;
@@ -26,6 +34,7 @@ interface Project {
   };
   link?: string;
   featured?: boolean;
+  slug?: string;
 }
 
 function ProjectCard({ project, index }: any) {
@@ -37,8 +46,9 @@ function ProjectCard({ project, index }: any) {
   const rotateY = useTransform(x, [-100, 100], [-10, 10]);
 
   const handleClick = () => {
-    // Navigate to project detail page
-    window.history.pushState({}, '', `/project/${project.id}`);
+    // Use slug for SEO-friendly URL, fallback to id if slug doesn't exist
+    const projectSlug = project.slug || generateSlug(project.title);
+    window.history.pushState({}, '', `/project/${projectSlug}`);
     window.dispatchEvent(new Event('popstate'));
   };
 
