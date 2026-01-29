@@ -389,7 +389,7 @@ export function Portfolio({ onViewAll }: { onViewAll?: () => void }) {
               onClick={() => {
                 window.location.href = '/portfolio';
               }}
-              className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl shadow-lg hover:shadow-xl hover:shadow-purple-500/50 transition-all text-lg font-semibold group"
+              className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl shadow-lg hover:shadow-xl hover:shadow-purple-500/50 transition-all text-lg font-semibold group cursor-pointer"
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
             >
