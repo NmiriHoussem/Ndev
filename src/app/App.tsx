@@ -12,6 +12,7 @@ import { PrivacyPolicy } from './components/PrivacyPolicy';
 import { TermsOfService } from './components/TermsOfService';
 import { SEO, SEOConfigs } from './components/SEO';
 import { DynamicFavicons } from './components/DynamicFavicons';
+import { ProjectDetail } from './components/ProjectDetail';
 
 export default function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -26,6 +27,12 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
+  // Navigation helper
+  const navigateTo = (path: string) => {
+    window.history.pushState({}, '', path);
+    setCurrentPath(path);
+  };
+
   // Check routes - SEO-friendly URLs with multiple variations
   const isAdminRoute = currentPath === '/admin' || currentPath === '/admin/';
   
@@ -39,6 +46,10 @@ export default function App() {
     currentPath === '/terms-of-service' || currentPath === '/terms-of-service/' ||
     currentPath === '/terms-of-services' || currentPath === '/terms-of-services/' ||
     currentPath === '/terms' || currentPath === '/terms/';
+
+  // Project detail route - matches /project/:id or /projects/:id
+  const projectMatch = currentPath.match(/^\/(project|projects)\/([^\/]+)\/?$/);
+  const projectId = projectMatch ? projectMatch[2] : null;
 
   if (isAdminRoute) {
     return <Admin />;
@@ -58,6 +69,22 @@ export default function App() {
       <>
         <SEO {...SEOConfigs.terms} />
         <TermsOfService />
+      </>
+    );
+  }
+
+  if (projectId) {
+    return (
+      <>
+        <SEO 
+          title={`Project Details - NdevDigital`}
+          description="Explore our project case study and learn about our development process, challenges, and solutions."
+        />
+        <DynamicFavicons />
+        <ProjectDetail 
+          projectId={projectId}
+          onBack={() => navigateTo('/')}
+        />
       </>
     );
   }

@@ -46,6 +46,23 @@ interface Project {
   };
   link?: string;
   featured?: boolean;
+  // Extended fields for detail page
+  overview?: string;
+  challenge?: string;
+  solution?: string;
+  results?: string[];
+  impact?: string;
+  timeline?: string;
+  teamSize?: string;
+  role?: string;
+  technologies?: string[];
+  testimonial?: {
+    quote: string;
+    author: string;
+    position: string;
+  };
+  gallery?: string[];
+  keyFeatures?: string[];
 }
 
 interface Client {
@@ -93,6 +110,18 @@ export function Admin() {
     metrics: { users: '', rating: '', growth: '' },
     link: '',
     featured: false,
+    overview: '',
+    challenge: '',
+    solution: '',
+    results: [],
+    impact: '',
+    timeline: '',
+    teamSize: '',
+    role: '',
+    technologies: [],
+    testimonial: { quote: '', author: '', position: '' },
+    gallery: [],
+    keyFeatures: [],
   });
   
   // Clients state
@@ -611,6 +640,18 @@ export function Admin() {
         metrics: { users: '', rating: '', growth: '' },
         link: '',
         featured: false,
+        overview: '',
+        challenge: '',
+        solution: '',
+        results: [],
+        impact: '',
+        timeline: '',
+        teamSize: '',
+        role: '',
+        technologies: [],
+        testimonial: { quote: '', author: '', position: '' },
+        gallery: [],
+        keyFeatures: [],
       });
       setShowProjectForm(false);
       loadProjects();
@@ -649,6 +690,18 @@ export function Admin() {
         metrics: { users: '', rating: '', growth: '' },
         link: '',
         featured: false,
+        overview: '',
+        challenge: '',
+        solution: '',
+        results: [],
+        impact: '',
+        timeline: '',
+        teamSize: '',
+        role: '',
+        technologies: [],
+        testimonial: { quote: '', author: '', position: '' },
+        gallery: [],
+        keyFeatures: [],
       });
       setShowProjectForm(false);
       loadProjects();
@@ -704,6 +757,18 @@ export function Admin() {
       metrics: { users: '', rating: '', growth: '' },
       link: '',
       featured: false,
+      overview: '',
+      challenge: '',
+      solution: '',
+      results: [],
+      impact: '',
+      timeline: '',
+      teamSize: '',
+      role: '',
+      technologies: [],
+      testimonial: { quote: '', author: '', position: '' },
+      gallery: [],
+      keyFeatures: [],
     });
     setShowProjectForm(false);
   };
@@ -1679,6 +1744,160 @@ export function Admin() {
                   />
                 </div>
               </div>
+
+              {/* Extended Fields for Project Detail Page */}
+              <div className="border-t border-gray-700 pt-6 mt-6">
+                <h3 className="text-lg font-semibold text-white mb-4">📄 Project Detail Page Content (Optional)</h3>
+                
+                <div className="grid md:grid-cols-3 gap-4 mb-4">
+                  <div>
+                    <label className="block text-sm text-gray-300 mb-2">Timeline</label>
+                    <input
+                      type="text"
+                      value={projectForm.timeline || ''}
+                      onChange={(e) => setProjectForm({ ...projectForm, timeline: e.target.value })}
+                      placeholder="e.g., 3 months"
+                      className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-300 mb-2">Team Size</label>
+                    <input
+                      type="text"
+                      value={projectForm.teamSize || ''}
+                      onChange={(e) => setProjectForm({ ...projectForm, teamSize: e.target.value })}
+                      placeholder="e.g., 5 people"
+                      className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-300 mb-2">Your Role</label>
+                    <input
+                      type="text"
+                      value={projectForm.role || ''}
+                      onChange={(e) => setProjectForm({ ...projectForm, role: e.target.value })}
+                      placeholder="e.g., Lead Developer"
+                      className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-sm text-gray-300 mb-2">Overview</label>
+                  <textarea
+                    value={projectForm.overview || ''}
+                    onChange={(e) => setProjectForm({ ...projectForm, overview: e.target.value })}
+                    placeholder="Detailed project overview..."
+                    rows={3}
+                    className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-sm text-gray-300 mb-2">Challenge</label>
+                  <textarea
+                    value={projectForm.challenge || ''}
+                    onChange={(e) => setProjectForm({ ...projectForm, challenge: e.target.value })}
+                    placeholder="What challenges did the project face?..."
+                    rows={3}
+                    className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-sm text-gray-300 mb-2">Solution</label>
+                  <textarea
+                    value={projectForm.solution || ''}
+                    onChange={(e) => setProjectForm({ ...projectForm, solution: e.target.value })}
+                    placeholder="How did you solve these challenges?..."
+                    rows={3}
+                    className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-sm text-gray-300 mb-2">Technologies (comma separated)</label>
+                  <input
+                    type="text"
+                    value={(projectForm.technologies || []).join(', ')}
+                    onChange={(e) => setProjectForm({ ...projectForm, technologies: e.target.value.split(',').map(t => t.trim()).filter(t => t) })}
+                    placeholder="e.g., React, Node.js, MongoDB"
+                    className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-sm text-gray-300 mb-2">Key Features (one per line)</label>
+                  <textarea
+                    value={(projectForm.keyFeatures || []).join('\n')}
+                    onChange={(e) => setProjectForm({ ...projectForm, keyFeatures: e.target.value.split('\n').filter(f => f.trim()) })}
+                    placeholder="Feature 1&#10;Feature 2&#10;Feature 3"
+                    rows={4}
+                    className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-sm text-gray-300 mb-2">Results (one per line)</label>
+                  <textarea
+                    value={(projectForm.results || []).join('\n')}
+                    onChange={(e) => setProjectForm({ ...projectForm, results: e.target.value.split('\n').filter(r => r.trim()) })}
+                    placeholder="Result 1&#10;Result 2&#10;Result 3"
+                    rows={4}
+                    className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-sm text-gray-300 mb-2">Gallery Images (comma separated URLs)</label>
+                  <textarea
+                    value={(projectForm.gallery || []).join(', ')}
+                    onChange={(e) => setProjectForm({ ...projectForm, gallery: e.target.value.split(',').map(url => url.trim()).filter(url => url) })}
+                    placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"
+                    rows={2}
+                    className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+
+                <div className="border border-gray-700 rounded-lg p-4 mb-4">
+                  <h4 className="text-sm font-semibold text-gray-300 mb-3">Client Testimonial</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-gray-400 mb-1">Quote</label>
+                      <textarea
+                        value={projectForm.testimonial?.quote || ''}
+                        onChange={(e) => setProjectForm({ ...projectForm, testimonial: { ...projectForm.testimonial, quote: e.target.value } as any })}
+                        placeholder="Client's testimonial quote..."
+                        rows={2}
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      />
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs text-gray-400 mb-1">Author Name</label>
+                        <input
+                          type="text"
+                          value={projectForm.testimonial?.author || ''}
+                          onChange={(e) => setProjectForm({ ...projectForm, testimonial: { ...projectForm.testimonial, author: e.target.value } as any })}
+                          placeholder="John Doe"
+                          className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-400 mb-1">Author Position</label>
+                        <input
+                          type="text"
+                          value={projectForm.testimonial?.position || ''}
+                          onChange={(e) => setProjectForm({ ...projectForm, testimonial: { ...projectForm.testimonial, position: e.target.value } as any })}
+                          placeholder="CEO, Company Name"
+                          className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div className="flex items-center gap-4">
                 <Button
                   onClick={editingProject ? () => handleUpdateProject(editingProject) : handleAddProject}

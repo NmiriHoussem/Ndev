@@ -35,6 +35,12 @@ function ProjectCard({ project, index }: any) {
   const rotateX = useTransform(y, [-100, 100], [10, -10]);
   const rotateY = useTransform(x, [-100, 100], [-10, 10]);
 
+  const handleClick = () => {
+    // Navigate to project detail page
+    window.history.pushState({}, '', `/project/${project.id}`);
+    window.dispatchEvent(new Event('popstate'));
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 60, scale: 0.9 }}
@@ -43,8 +49,9 @@ function ProjectCard({ project, index }: any) {
       transition={{ duration: 0.6, delay: index * 0.1 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
-      className="group h-full"
+      className="group h-full cursor-pointer"
       style={{ perspective: 1000 }}
+      onClick={handleClick}
     >
       <motion.div
         className="relative h-full"
