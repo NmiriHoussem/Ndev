@@ -138,6 +138,7 @@ export function Admin() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadingGalleryImage, setUploadingGalleryImage] = useState(false);
 
   useEffect(() => {
     // Check authentication
@@ -820,6 +821,65 @@ export function Admin() {
       console.error('Error uploading image:', error);
     } finally {
       setUploadingImage(false);
+    }
+  };
+
+  const handleGalleryImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    // Validate file types
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    for (let i = 0; i < files.length; i++) {
+      if (!validTypes.includes(files[i].type)) {
+        setError('Please upload JPEG, PNG, WebP, or GIF images only.');
+        return;
+      }
+      // Validate file size (5MB max per file)
+      if (files[i].size > 5242880) {
+        setError(`Image "${files[i].name}" is too large. Maximum size is 5MB per image.`);
+        return;
+      }
+    }
+
+    setUploadingGalleryImage(true);
+    setError('');
+
+    try {
+      const uploadedUrls: string[] = [];
+      
+      // Upload each file
+      for (let i = 0; i < files.length; i++) {
+        const formData = new FormData();
+        formData.append('file', files[i]);
+
+        const response = await fetch(`${API_BASE}/upload-image`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${publicAnonKey}`
+          },
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+          setError(data.error || `Failed to upload image "${files[i].name}"`);
+          continue;
+        }
+
+        uploadedUrls.push(data.url);
+      }
+
+      // Add uploaded URLs to existing gallery
+      const currentGallery = projectForm.gallery || [];
+      setProjectForm({ ...projectForm, gallery: [...currentGallery, ...uploadedUrls] });
+      console.log('Gallery images uploaded successfully:', uploadedUrls);
+    } catch (error) {
+      setError('Failed to upload gallery images');
+      console.error('Error uploading gallery images:', error);
+    } finally {
+      setUploadingGalleryImage(false);
     }
   };
 
@@ -1849,14 +1909,66 @@ export function Admin() {
                 </div>
 
                 <div className="mb-4">
-                  <label className="block text-sm text-gray-300 mb-2">Gallery Images (comma separated URLs)</label>
+                  <label className="block text-sm text-gray-300 mb-2">Gallery Images / Screenshots</label>
+                  
+                  {/* URL Input */}
                   <textarea
                     value={(projectForm.gallery || []).join(', ')}
                     onChange={(e) => setProjectForm({ ...projectForm, gallery: e.target.value.split(',').map(url => url.trim()).filter(url => url) })}
                     placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"
                     rows={2}
-                    className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 mb-2"
                   />
+                  
+                  {/* File Upload */}
+                  <div>
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/gif"
+                      multiple
+                      onChange={handleGalleryImageUpload}
+                      className="hidden"
+                      id="gallery-images-upload"
+                      disabled={uploadingGalleryImage}
+                    />
+                    <label
+                      htmlFor="gallery-images-upload"
+                      className={`flex items-center justify-center gap-2 w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg cursor-pointer hover:bg-white/10 transition-colors ${
+                        uploadingGalleryImage ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}
+                    >
+                      <Upload size={20} className="text-purple-400" />
+                      <span className="text-gray-300">
+                        {uploadingGalleryImage ? 'Uploading...' : 'Upload Screenshots/Images (Multiple)'}
+                      </span>
+                    </label>
+                  </div>
+                  
+                  {/* Preview Gallery */}
+                  {projectForm.gallery && projectForm.gallery.length > 0 && (
+                    <div className="mt-3 grid grid-cols-3 gap-2">
+                      {projectForm.gallery.map((url, index) => (
+                        <div key={index} className="relative group">
+                          <img 
+                            src={url} 
+                            alt={`Gallery ${index + 1}`} 
+                            className="w-full h-24 object-cover rounded-lg border border-white/10"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newGallery = [...(projectForm.gallery || [])];
+                              newGallery.splice(index, 1);
+                              setProjectForm({ ...projectForm, gallery: newGallery });
+                            }}
+                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="border border-gray-700 rounded-lg p-4 mb-4">
