@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 
 const projectId = "mdauklijxlvxpcooytai";
 const publicAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kYXVrbGlqeGx2eHBjb295dGFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5ODY1MzIsImV4cCI6MjA4MzU2MjUzMn0.cvk8mjS0e-iGlYXTiEbjLJrecnDTWAOR2Pr2RbIUSqI";
@@ -162,7 +163,7 @@ export function Clients() {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   className="flex flex-col items-center justify-center gap-2"
                 >
-                  <img
+                  <ImageWithFallback
                     src={client.logo}
                     alt={client.name}
                     className="max-h-16 max-w-[200px] object-contain opacity-70 hover:opacity-100 transition-all duration-300"
@@ -180,16 +181,11 @@ export function Clients() {
                 return (
                   <div key={`${client.id}-${index}`} className="px-4">
                     <div className="flex flex-col items-center justify-center h-32 gap-2">
-                      <img
+                      <ImageWithFallback
                         src={client.logo}
                         alt={client.name}
                         className="max-h-16 max-w-full object-contain opacity-70 hover:opacity-100 transition-all duration-300"
                         title={client.name}
-                        onError={(e) => {
-                          console.error(`Failed to load image for ${client.name}:`, client.logo);
-                          e.currentTarget.style.border = '2px solid red';
-                        }}
-                        onLoad={() => console.log(`Successfully loaded image for ${client.name}`)}
                       />
                       <span className="text-xs text-gray-500 font-medium">{client.name}</span>
                     </div>

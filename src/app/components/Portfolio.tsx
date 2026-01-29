@@ -4,6 +4,7 @@ import { ExternalLink, Star, TrendingUp, Users } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Folder } from 'lucide-react';
+import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 
 const projectId = "mdauklijxlvxpcooytai";
 const publicAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kYXVrbGlqeGx2eHBjb295dGFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5ODY1MzIsImV4cCI6MjA4MzU2MjUzMn0.cvk8mjS0e-iGlYXTiEbjLJrecnDTWAOR2Pr2RbIUSqI";
@@ -71,13 +72,17 @@ function ProjectCard({ project, index }: any) {
         <div className="relative h-full bg-white rounded-3xl overflow-hidden shadow-xl border-2 border-gray-100 group-hover:border-transparent transition-all">
           {/* Image with parallax effect */}
           <div className="relative h-72 overflow-hidden">
-            <motion.img
-              src={project.image}
-              alt={project.title}
-              className="w-full h-full object-cover"
+            <motion.div
+              className="w-full h-full"
               animate={{ scale: isHovered ? 1.15 : 1 }}
               transition={{ duration: 0.6 }}
-            />
+            >
+              <ImageWithFallback
+                src={project.image}
+                alt={project.title}
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
             
             {/* Overlay gradient */}
             <div className={`absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent`}></div>
