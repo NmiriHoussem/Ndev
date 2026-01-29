@@ -1,0 +1,432 @@
+import { motion, useMotionValue, useTransform } from 'motion/react';
+import { Badge } from './ui/badge';
+import { ExternalLink, Star, TrendingUp, Users, Grid, List, Filter } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowRight, Folder } from 'lucide-react';
+import { Header } from './Header';
+import { Footer } from './Footer';
+import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
+
+const projectId = "mdauklijxlvxpcooytai";
+const publicAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kYXVrbGlqeGx2eHBjb295dGFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5ODY1MzIsImV4cCI6MjA4MzU2MjUzMn0.cvk8mjS0e-iGlYXTiEbjLJrecnDTWAOR2Pr2RbIUSqI";
+
+const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-a2e14eff`;
+
+interface Project {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  image: string;
+  tags: string[];
+  gradient: string;
+  metrics: {
+    users: string;
+    rating: string;
+    growth: string;
+  };
+  link?: string;
+  featured?: boolean;
+}
+
+function ProjectCard({ project, index }: any) {
+  const [isHovered, setIsHovered] = useState(false);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  
+  const rotateX = useTransform(y, [-100, 100], [10, -10]);
+  const rotateY = useTransform(x, [-100, 100], [-10, 10]);
+
+  const handleClick = () => {
+    // Navigate to project detail page
+    window.history.pushState({}, '', `/project/${project.id}`);
+    window.dispatchEvent(new Event('popstate'));
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 60, scale: 0.9 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, delay: index * 0.1 }}
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
+      className="group h-full cursor-pointer"
+      style={{ perspective: 1000 }}
+      onClick={handleClick}
+    >
+      <motion.div
+        className="relative h-full"
+        style={{
+          rotateX,
+          rotateY,
+          transformStyle: 'preserve-3d',
+        }}
+        whileHover={{ scale: 1.03, z: 50 }}
+        transition={{ duration: 0.3 }}
+      >
+        {/* Massive glow on hover */}
+        <motion.div
+          className={`absolute -inset-2 bg-gradient-to-r ${project.gradient} rounded-3xl blur-2xl opacity-0 group-hover:opacity-40 transition-opacity`}
+        ></motion.div>
+
+        <div className="relative h-full bg-white rounded-3xl overflow-hidden shadow-xl border-2 border-gray-100 group-hover:border-transparent transition-all">
+          {/* Image with parallax effect */}
+          <div className="relative h-72 overflow-hidden">
+            <motion.div
+              className="w-full h-full"
+              animate={{ scale: isHovered ? 1.15 : 1 }}
+              transition={{ duration: 0.6 }}
+            >
+              <ImageWithFallback
+                src={project.image}
+                alt={project.title}
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+            
+            {/* Overlay gradient */}
+            <div className={`absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent`}></div>
+
+            {/* Floating metrics */}
+            <motion.div
+              className="absolute top-4 left-4 right-4 flex gap-2"
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: isHovered ? 0 : -20, opacity: isHovered ? 1 : 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="flex-1 bg-white/20 backdrop-blur-xl rounded-xl p-3 border border-white/40">
+                <div className="flex items-center gap-2 text-white">
+                  <Users size={16} />
+                  <span className="text-sm">{project.metrics.users}</span>
+                </div>
+              </div>
+              <div className="flex-1 bg-white/20 backdrop-blur-xl rounded-xl p-3 border border-white/40">
+                <div className="flex items-center gap-2 text-white">
+                  <Star size={16} className="fill-yellow-400 text-yellow-400" />
+                  <span className="text-sm">{project.metrics.rating}</span>
+                </div>
+              </div>
+              <div className="flex-1 bg-white/20 backdrop-blur-xl rounded-xl p-3 border border-white/40">
+                <div className="flex items-center gap-2 text-white">
+                  <TrendingUp size={16} />
+                  <span className="text-sm">{project.metrics.growth}</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Category badge at bottom of image */}
+            <div className="absolute bottom-4 left-4">
+              <Badge className={`bg-gradient-to-r ${project.gradient} text-white border-0 shadow-lg px-4 py-2 text-sm`}>
+                {project.category}
+              </Badge>
+            </div>
+
+            {/* External link icon */}
+            <motion.div
+              className="absolute top-4 right-4"
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ 
+                scale: isHovered ? 1 : 0, 
+                rotate: isHovered ? 0 : -180 
+              }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className={`w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-xl`}>
+                <ExternalLink className={`bg-gradient-to-r ${project.gradient} bg-clip-text text-transparent`} size={20} />
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Content */}
+          <div className="p-6">
+            <h3 className="text-2xl md:text-3xl mb-3 text-gray-900 group-hover:bg-gradient-to-r group-hover:from-gray-900 group-hover:to-gray-700 group-hover:bg-clip-text group-hover:text-transparent transition-all">
+              {project.title}
+            </h3>
+            
+            <p className="text-gray-600 mb-6 leading-relaxed">{project.description}</p>
+            
+            {/* Tags */}
+            <div className="flex flex-wrap gap-2">
+              {project.tags.map((tag: string, idx: number) => (
+                <motion.div
+                  key={tag}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.1 }}
+                >
+                  <Badge 
+                    variant="outline" 
+                    className="border-gray-300 text-gray-700 hover:border-purple-300 hover:bg-purple-50 transition-colors"
+                  >
+                    {tag}
+                  </Badge>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {/* Animated bottom accent */}
+          <motion.div
+            className={`absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r ${project.gradient}`}
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: isHovered ? 1 : 0 }}
+            transition={{ duration: 0.4 }}
+            style={{ transformOrigin: 'left' }}
+          />
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+export function PortfolioPage() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/projects`, {
+          headers: {
+            'Authorization': `Bearer ${publicAnonKey}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        
+        if (data.success && data.projects && data.projects.length > 0) {
+          const projectsList = data.projects.filter((project: any) => project && project.id && project.title);
+          setProjects(projectsList);
+        } else {
+          setProjects([]);
+        }
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+        setProjects([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  // Get unique categories
+  const categories = ['All', ...Array.from(new Set(projects.map(p => p.category)))];
+
+  // Filter projects by category
+  const filteredProjects = selectedCategory === 'All' 
+    ? projects 
+    : projects.filter(p => p.category === selectedCategory);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50">
+      <Header />
+      
+      {/* Hero Section */}
+      <section className="pt-32 pb-16 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.02]" style={{
+          backgroundImage: 'radial-gradient(circle, #8b5cf6 1px, transparent 1px)',
+          backgroundSize: '30px 30px',
+        }}></div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div
+            className="text-center max-w-4xl mx-auto"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <motion.div
+              className="inline-block mb-6"
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ duration: 0.8, type: "spring" }}
+            >
+              <div className="relative">
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 rounded-full blur-xl opacity-50"
+                  animate={{ 
+                    scale: [1, 1.3, 1],
+                    rotate: [0, 180, 360],
+                  }}
+                  transition={{ duration: 8, repeat: Infinity }}
+                ></motion.div>
+                <div className="relative inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-purple-100 via-pink-100 to-blue-100 border-2 border-white shadow-xl">
+                  <Grid className="text-purple-600" size={20} />
+                  <span className="text-lg bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
+                    Our Portfolio
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+              Explore All Our{' '}
+              <span className="relative inline-block">
+                <motion.span
+                  className="absolute -inset-3 bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300 blur-2xl opacity-40"
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    rotate: [0, 5, -5, 0],
+                  }}
+                  transition={{ duration: 5, repeat: Infinity }}
+                ></motion.span>
+                <span className="relative bg-gradient-to-r from-purple-600 via-pink-500 to-blue-600 bg-clip-text text-transparent">
+                  Projects
+                </span>
+              </span>
+            </h1>
+            
+            <p className="text-xl md:text-2xl text-gray-600">
+              A comprehensive showcase of our work across different industries and technologies
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Filter Section */}
+      <section className="pb-16">
+        <div className="container mx-auto px-4">
+          <motion.div
+            className="flex flex-wrap justify-center gap-3 mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            {categories.map((category) => (
+              <motion.button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`px-6 py-3 rounded-xl font-medium transition-all ${
+                  selectedCategory === category
+                    ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg'
+                    : 'bg-white text-gray-700 hover:shadow-md border border-gray-200'
+                }`}
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {category}
+              </motion.button>
+            ))}
+          </motion.div>
+
+          <motion.p
+            className="text-center text-gray-600 mb-12"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+          >
+            Showing {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''}
+          </motion.p>
+        </div>
+      </section>
+
+      {/* Projects Grid */}
+      <section className="pb-32">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {loading ? (
+              <div className="col-span-full text-center py-20">
+                <motion.div
+                  className="inline-block w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                />
+                <p className="mt-4 text-gray-600">Loading projects...</p>
+              </div>
+            ) : filteredProjects.length === 0 ? (
+              <div className="col-span-full text-center py-20">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="max-w-md mx-auto"
+                >
+                  <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-purple-100 to-blue-100 rounded-full flex items-center justify-center">
+                    <Folder className="w-12 h-12 text-purple-600" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    {selectedCategory === 'All' ? 'No Projects Yet' : `No ${selectedCategory} Projects`}
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    {selectedCategory === 'All' 
+                      ? 'Projects will appear here once added through the admin panel.'
+                      : 'Try selecting a different category.'
+                    }
+                  </p>
+                  {selectedCategory === 'All' && (
+                    <a
+                      href="/admin"
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:shadow-lg transition-all"
+                    >
+                      Go to Admin Panel
+                      <ArrowRight size={16} />
+                    </a>
+                  )}
+                </motion.div>
+              </div>
+            ) : (
+              filteredProjects.map((project, idx) => (
+                <ProjectCard key={project.id} project={project} index={idx} />
+              ))
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 bg-white/50 backdrop-blur-sm">
+        <div className="container mx-auto px-4">
+          <motion.div
+            className="text-center"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="inline-block relative">
+              <motion.div
+                className="absolute -inset-4 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 rounded-full blur-2xl opacity-30"
+                animate={{
+                  scale: [1, 1.2, 1],
+                  rotate: [0, 180, 360],
+                }}
+                transition={{ duration: 8, repeat: Infinity }}
+              ></motion.div>
+
+              <div className="relative bg-white/80 backdrop-blur-xl rounded-3xl p-12 border-2 border-white shadow-2xl">
+                <h3 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                  Ready to Start Your Project?
+                </h3>
+                <p className="text-lg text-gray-600 mb-8 max-w-xl mx-auto">
+                  Let's collaborate and create something extraordinary together. Your project could be our next showcase!
+                </p>
+                <motion.button
+                  className="px-10 py-5 bg-gradient-to-r from-purple-600 via-pink-500 to-blue-600 text-white rounded-2xl shadow-xl hover:shadow-2xl hover:shadow-purple-500/50 transition-all text-lg flex items-center gap-2 mx-auto"
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    window.location.href = '/#contact';
+                  }}
+                >
+                  Get In Touch
+                  <ArrowRight size={20} />
+                </motion.button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+}

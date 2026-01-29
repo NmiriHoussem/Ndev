@@ -4,6 +4,7 @@ import { Hero } from './components/Hero';
 import { Services } from './components/Services';
 import { About } from './components/About';
 import { Portfolio } from './components/Portfolio';
+import { PortfolioPage } from './components/PortfolioPage';
 import { Clients } from './components/Clients';
 import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
@@ -47,8 +48,11 @@ export default function App() {
     currentPath === '/terms-of-services' || currentPath === '/terms-of-services/' ||
     currentPath === '/terms' || currentPath === '/terms/';
 
+  // Portfolio page route - /portfolio
+  const isPortfolioRoute = currentPath === '/portfolio' || currentPath === '/portfolio/';
+
   // Project detail route - matches /project/:id or /projects/:id
-  const projectMatch = currentPath.match(/^\/(project|projects)\/([^\/]+)\/?$/);
+  const projectMatch = currentPath.match(/^\/(project|projects)\/([^\\/]+)\/?$/);
   const projectId = projectMatch ? projectMatch[2] : null;
 
   if (isAdminRoute) {
@@ -73,6 +77,19 @@ export default function App() {
     );
   }
 
+  if (isPortfolioRoute) {
+    return (
+      <>
+        <SEO 
+          title="Portfolio - NdevDigital | Our Projects & Case Studies"
+          description="Explore our portfolio of successful projects including web development, mobile apps, UI/UX design, and SaaS products."
+        />
+        <DynamicFavicons />
+        <PortfolioPage />
+      </>
+    );
+  }
+
   if (projectId) {
     return (
       <>
@@ -83,7 +100,7 @@ export default function App() {
         <DynamicFavicons />
         <ProjectDetail 
           projectId={projectId}
-          onBack={() => navigateTo('/')}
+          onBack={() => navigateTo('/portfolio')}
         />
       </>
     );
@@ -99,7 +116,7 @@ export default function App() {
         <Clients />
         <Services />
         <About />
-        <Portfolio />
+        <Portfolio onViewAll={() => navigateTo('/portfolio')} />
         <Contact />
       </main>
       <Footer />

@@ -179,7 +179,7 @@ function ProjectCard({ project, index }: any) {
   );
 }
 
-export function Portfolio() {
+export function Portfolio({ onViewAll }: { onViewAll?: () => void }) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -205,7 +205,8 @@ export function Portfolio() {
           // Projects are returned directly, not wrapped in {key, value} format
           const projectsList = data.projects.filter((project: any) => project && project.id && project.title);
           console.log('Filtered projects for display:', projectsList);
-          setProjects(projectsList);
+          // Show only first 6 projects on home page
+          setProjects(projectsList.slice(0, 6));
         } else {
           // Use default projects if none exist in database
           console.log('No projects found, using empty state');
