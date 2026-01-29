@@ -245,201 +245,272 @@ export function ProjectDetail({ projectId, onBack }: ProjectDetailProps) {
       {/* Main Content: Two Column Layout - Gallery Left, Text Right */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-[400px_1fr] gap-12 max-w-7xl mx-auto">
-            {/* Left Column: Image Gallery (Sticky) */}
-            <motion.div
-              className="space-y-6 lg:sticky lg:top-24 self-start"
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
-              {/* Gallery Images */}
-              {project.gallery && project.gallery.length > 0 && (
-                <div className="space-y-4">
-                  <h3 className="text-2xl font-bold text-gray-900">Project Gallery</h3>
-                  <div className="space-y-4">
-                    {project.gallery.map((imageUrl, idx) => (
-                      <motion.div
-                        key={idx}
-                        className="rounded-xl overflow-hidden shadow-lg"
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: idx * 0.1 }}
-                        whileHover={{ scale: 1.02 }}
-                      >
-                        <ImageWithFallback
-                          src={imageUrl}
-                          alt={`${project.title} screenshot ${idx + 1}`}
-                          className="w-full h-auto object-cover"
-                        />
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              )}
+          {(() => {
+            // Check if there's any right-side content
+            const hasRightContent = 
+              project.overview ||
+              project.challenge ||
+              project.solution ||
+              (project.keyFeatures && project.keyFeatures.length > 0) ||
+              (project.results && project.results.length > 0) ||
+              (project.technologies && project.technologies.length > 0) ||
+              (project.testimonial && project.testimonial.quote);
 
-              {/* Project Link */}
-              {project.link && (
-                <motion.a
-                  href={project.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`flex items-center justify-center gap-2 w-full px-6 py-4 bg-gradient-to-r ${project.gradient} text-white rounded-xl shadow-xl hover:shadow-2xl transition-all text-lg font-semibold`}
-                  whileHover={{ scale: 1.02, y: -2 }}
-                  whileTap={{ scale: 0.98 }}
+            // If no right content, render gallery in full width centered
+            if (!hasRightContent) {
+              return (
+                <div className="max-w-4xl mx-auto">
+                  <motion.div
+                    className="space-y-6"
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                  >
+                    {/* Gallery Images */}
+                    {project.gallery && project.gallery.length > 0 && (
+                      <div className="space-y-4">
+                        <h3 className="text-2xl font-bold text-gray-900 text-center">Project Gallery</h3>
+                        <div className="space-y-4">
+                          {project.gallery.map((imageUrl, idx) => (
+                            <motion.div
+                              key={idx}
+                              className="rounded-xl overflow-hidden shadow-lg"
+                              initial={{ opacity: 0, y: 20 }}
+                              whileInView={{ opacity: 1, y: 0 }}
+                              viewport={{ once: true }}
+                              transition={{ delay: idx * 0.1 }}
+                              whileHover={{ scale: 1.02 }}
+                            >
+                              <ImageWithFallback
+                                src={imageUrl}
+                                alt={`${project.title} screenshot ${idx + 1}`}
+                                className="w-full h-auto object-cover"
+                              />
+                            </motion.div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Project Link */}
+                    {project.link && (
+                      <motion.a
+                        href={project.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`flex items-center justify-center gap-2 w-full max-w-md mx-auto px-6 py-4 bg-gradient-to-r ${project.gradient} text-white rounded-xl shadow-xl hover:shadow-2xl transition-all text-lg font-semibold`}
+                        whileHover={{ scale: 1.02, y: -2 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        View Live Project
+                        <ExternalLink size={20} />
+                      </motion.a>
+                    )}
+                  </motion.div>
+                </div>
+              );
+            }
+
+            // Otherwise, render two-column layout
+            return (
+              <div className="grid lg:grid-cols-[400px_1fr] gap-12 max-w-7xl mx-auto">
+                {/* Left Column: Image Gallery (Sticky) */}
+                <motion.div
+                  className="space-y-6 lg:sticky lg:top-24 self-start"
+                  initial={{ opacity: 0, x: -30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
                 >
-                  View Live Project
-                  <ExternalLink size={20} />
-                </motion.a>
-              )}
-            </motion.div>
-
-            {/* Right Column: Text Content */}
-            <motion.div
-              className="space-y-12"
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              {/* Overview Section */}
-              {project.overview && (
-                <div className="space-y-4">
-                  <h2 className="text-3xl md:text-4xl font-bold flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-r ${project.gradient} flex items-center justify-center`}>
-                      <Target className="text-white" size={20} />
-                    </div>
-                    Project Overview
-                  </h2>
-                  <p className="text-gray-700 leading-relaxed text-lg whitespace-pre-line">
-                    {project.overview}
-                  </p>
-                </div>
-              )}
-
-              {/* Challenge Section */}
-              {project.challenge && (
-                <div className="space-y-4 p-6 bg-orange-50 rounded-2xl border border-orange-100">
-                  <h2 className="text-3xl md:text-4xl font-bold flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-red-500 to-orange-500 flex items-center justify-center">
-                      <Lightbulb className="text-white" size={20} />
-                    </div>
-                    The Challenge
-                  </h2>
-                  <p className="text-gray-700 leading-relaxed text-lg whitespace-pre-line">
-                    {project.challenge}
-                  </p>
-                </div>
-              )}
-
-              {/* Solution Section */}
-              {project.solution && (
-                <div className="space-y-4 p-6 bg-green-50 rounded-2xl border border-green-100">
-                  <h2 className="text-3xl md:text-4xl font-bold flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center">
-                      <Zap className="text-white" size={20} />
-                    </div>
-                    Our Solution
-                  </h2>
-                  <p className="text-gray-700 leading-relaxed text-lg whitespace-pre-line">
-                    {project.solution}
-                  </p>
-                </div>
-              )}
-
-              {/* Key Features */}
-              {project.keyFeatures && project.keyFeatures.length > 0 && (
-                <div className="space-y-4">
-                  <h2 className="text-3xl md:text-4xl font-bold">Key Features</h2>
-                  <div className="space-y-3">
-                    {project.keyFeatures.map((feature, idx) => (
-                      <motion.div
-                        key={idx}
-                        className="flex items-start gap-4 p-4 rounded-xl bg-white shadow-md border border-gray-100"
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: idx * 0.1 }}
-                      >
-                        <div className={`flex-shrink-0 w-6 h-6 rounded-lg bg-gradient-to-r ${project.gradient} flex items-center justify-center`}>
-                          <Check className="text-white" size={16} />
-                        </div>
-                        <p className="text-gray-700 leading-relaxed">{feature}</p>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Results Section */}
-              {project.results && project.results.length > 0 && (
-                <div className="space-y-4">
-                  <h2 className="text-3xl md:text-4xl font-bold">Results & Impact</h2>
-                  <div className="space-y-4">
-                    {project.results.map((result, idx) => (
-                      <motion.div
-                        key={idx}
-                        className="flex items-start gap-4 p-5 rounded-xl bg-purple-50 shadow-md border border-purple-100"
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: idx * 0.1 }}
-                      >
-                        <div className={`flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-r ${project.gradient} flex items-center justify-center text-white font-bold`}>
-                          {idx + 1}
-                        </div>
-                        <p className="text-gray-700 leading-relaxed text-lg">{result}</p>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Technologies */}
-              {project.technologies && project.technologies.length > 0 && (
-                <div className="space-y-4">
-                  <h2 className="text-3xl md:text-4xl font-bold">Technologies Used</h2>
-                  <div className="flex flex-wrap gap-3">
-                    {project.technologies.map((tech, idx) => (
-                      <motion.div
-                        key={tech}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: idx * 0.05 }}
-                      >
-                        <Badge className={`bg-gradient-to-r ${project.gradient} text-white border-0 shadow-md px-5 py-2 text-base`}>
-                          {tech}
-                        </Badge>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Testimonial */}
-              {project.testimonial && project.testimonial.quote && (
-                <div className="relative p-8 rounded-2xl bg-gradient-to-br from-white to-purple-50 shadow-xl border border-gray-100">
-                  <div className={`absolute top-0 left-0 w-24 h-24 bg-gradient-to-r ${project.gradient} opacity-10 rounded-br-full`}></div>
-                  <div className="relative">
-                    <div className="text-5xl text-purple-300 mb-3">"</div>
-                    <p className="text-xl text-gray-700 leading-relaxed mb-6 italic">
-                      {project.testimonial.quote}
-                    </p>
-                    <div className="flex items-center gap-4">
-                      <div className={`w-12 h-12 rounded-full bg-gradient-to-r ${project.gradient}`}></div>
-                      <div>
-                        <div className="font-bold text-gray-900">{project.testimonial.author}</div>
-                        <div className="text-gray-600">{project.testimonial.position}</div>
+                  {/* Gallery Images */}
+                  {project.gallery && project.gallery.length > 0 && (
+                    <div className="space-y-4">
+                      <h3 className="text-2xl font-bold text-gray-900">Project Gallery</h3>
+                      <div className="space-y-4">
+                        {project.gallery.map((imageUrl, idx) => (
+                          <motion.div
+                            key={idx}
+                            className="rounded-xl overflow-hidden shadow-lg"
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: idx * 0.1 }}
+                            whileHover={{ scale: 1.02 }}
+                          >
+                            <ImageWithFallback
+                              src={imageUrl}
+                              alt={`${project.title} screenshot ${idx + 1}`}
+                              className="w-full h-auto object-cover"
+                            />
+                          </motion.div>
+                        ))}
                       </div>
                     </div>
-                  </div>
-                </div>
-              )}
-            </motion.div>
-          </div>
+                  )}
+
+                  {/* Project Link */}
+                  {project.link && (
+                    <motion.a
+                      href={project.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`flex items-center justify-center gap-2 w-full px-6 py-4 bg-gradient-to-r ${project.gradient} text-white rounded-xl shadow-xl hover:shadow-2xl transition-all text-lg font-semibold`}
+                      whileHover={{ scale: 1.02, y: -2 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      View Live Project
+                      <ExternalLink size={20} />
+                    </motion.a>
+                  )}
+                </motion.div>
+
+                {/* Right Column: Text Content */}
+                <motion.div
+                  className="space-y-12"
+                  initial={{ opacity: 0, x: 30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                >
+                  {/* Overview Section */}
+                  {project.overview && (
+                    <div className="space-y-4">
+                      <h2 className="text-3xl md:text-4xl font-bold flex items-center gap-3">
+                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-r ${project.gradient} flex items-center justify-center`}>
+                          <Target className="text-white" size={20} />
+                        </div>
+                        Project Overview
+                      </h2>
+                      <p className="text-gray-700 leading-relaxed text-lg whitespace-pre-line">
+                        {project.overview}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Challenge Section */}
+                  {project.challenge && (
+                    <div className="space-y-4 p-6 bg-orange-50 rounded-2xl border border-orange-100">
+                      <h2 className="text-3xl md:text-4xl font-bold flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-red-500 to-orange-500 flex items-center justify-center">
+                          <Lightbulb className="text-white" size={20} />
+                        </div>
+                        The Challenge
+                      </h2>
+                      <p className="text-gray-700 leading-relaxed text-lg whitespace-pre-line">
+                        {project.challenge}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Solution Section */}
+                  {project.solution && (
+                    <div className="space-y-4 p-6 bg-green-50 rounded-2xl border border-green-100">
+                      <h2 className="text-3xl md:text-4xl font-bold flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center">
+                          <Zap className="text-white" size={20} />
+                        </div>
+                        Our Solution
+                      </h2>
+                      <p className="text-gray-700 leading-relaxed text-lg whitespace-pre-line">
+                        {project.solution}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Key Features */}
+                  {project.keyFeatures && project.keyFeatures.length > 0 && (
+                    <div className="space-y-4">
+                      <h2 className="text-3xl md:text-4xl font-bold">Key Features</h2>
+                      <div className="space-y-3">
+                        {project.keyFeatures.map((feature, idx) => (
+                          <motion.div
+                            key={idx}
+                            className="flex items-start gap-4 p-4 rounded-xl bg-white shadow-md border border-gray-100"
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: idx * 0.1 }}
+                          >
+                            <div className={`flex-shrink-0 w-6 h-6 rounded-lg bg-gradient-to-r ${project.gradient} flex items-center justify-center`}>
+                              <Check className="text-white" size={16} />
+                            </div>
+                            <p className="text-gray-700 leading-relaxed">{feature}</p>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Results Section */}
+                  {project.results && project.results.length > 0 && (
+                    <div className="space-y-4">
+                      <h2 className="text-3xl md:text-4xl font-bold">Results & Impact</h2>
+                      <div className="space-y-4">
+                        {project.results.map((result, idx) => (
+                          <motion.div
+                            key={idx}
+                            className="flex items-start gap-4 p-5 rounded-xl bg-purple-50 shadow-md border border-purple-100"
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: idx * 0.1 }}
+                          >
+                            <div className={`flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-r ${project.gradient} flex items-center justify-center text-white font-bold`}>
+                              {idx + 1}
+                            </div>
+                            <p className="text-gray-700 leading-relaxed text-lg">{result}</p>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Technologies */}
+                  {project.technologies && project.technologies.length > 0 && (
+                    <div className="space-y-4">
+                      <h2 className="text-3xl md:text-4xl font-bold">Technologies Used</h2>
+                      <div className="flex flex-wrap gap-3">
+                        {project.technologies.map((tech, idx) => (
+                          <motion.div
+                            key={tech}
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: idx * 0.05 }}
+                          >
+                            <Badge className={`bg-gradient-to-r ${project.gradient} text-white border-0 shadow-md px-5 py-2 text-base`}>
+                              {tech}
+                            </Badge>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Testimonial */}
+                  {project.testimonial && project.testimonial.quote && (
+                    <div className="relative p-8 rounded-2xl bg-gradient-to-br from-white to-purple-50 shadow-xl border border-gray-100">
+                      <div className={`absolute top-0 left-0 w-24 h-24 bg-gradient-to-r ${project.gradient} opacity-10 rounded-br-full`}></div>
+                      <div className="relative">
+                        <div className="text-5xl text-purple-300 mb-3">"</div>
+                        <p className="text-xl text-gray-700 leading-relaxed mb-6 italic">
+                          {project.testimonial.quote}
+                        </p>
+                        <div className="flex items-center gap-4">
+                          <div className={`w-12 h-12 rounded-full bg-gradient-to-r ${project.gradient}`}></div>
+                          <div>
+                            <div className="font-bold text-gray-900">{project.testimonial.author}</div>
+                            <div className="text-gray-600">{project.testimonial.position}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              </div>
+            );
+          })()}
         </div>
       </section>
 
