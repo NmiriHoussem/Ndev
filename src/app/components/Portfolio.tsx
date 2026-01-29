@@ -376,6 +376,32 @@ export function Portfolio({ onViewAll }: { onViewAll?: () => void }) {
           )}
         </div>
 
+        {/* View All Projects Button */}
+        {!loading && projects.length > 0 && (
+          <motion.div
+            className="text-center mb-20"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <motion.button
+              onClick={() => {
+                window.location.href = '/portfolio';
+              }}
+              className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl shadow-lg hover:shadow-xl hover:shadow-purple-500/50 transition-all text-lg font-semibold group"
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              View All Projects
+              <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+            </motion.button>
+            <p className="mt-4 text-gray-600">
+              Explore our complete portfolio of {projects.length === 6 ? 'more than 6' : projects.length} projects
+            </p>
+          </motion.div>
+        )}
+
         {/* CTA with creative design */}
         <motion.div
           className="text-center"
