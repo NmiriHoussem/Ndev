@@ -76,6 +76,13 @@ export function Header() {
   }, []);
 
   const scrollToSection = (id: string) => {
+    // Special handling for Portfolio - always navigate to /portfolio page
+    if (id === 'portfolio') {
+      window.location.href = '/portfolio';
+      setIsMobileMenuOpen(false);
+      return;
+    }
+    
     const currentPath = window.location.pathname;
     
     // If we're on the home page, just scroll
