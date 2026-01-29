@@ -609,7 +609,7 @@ export function Admin() {
 
   // Project Management
   const handleAddProject = async () => {
-    if (!projectForm.title || !projectForm.category || !projectForm.description || !projectForm.image || !projectForm.tags || !projectForm.gradient || !projectForm.metrics?.users || !projectForm.metrics?.rating || !projectForm.metrics?.growth) {
+    if (!projectForm.title || !projectForm.category || !projectForm.description || !projectForm.image || !projectForm.tags || !projectForm.gradient) {
       setError('All required fields must be filled');
       return;
     }
