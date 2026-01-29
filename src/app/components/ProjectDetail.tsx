@@ -420,7 +420,7 @@ export function ProjectDetail({ projectId, onBack }: ProjectDetailProps) {
               )}
 
               {/* Testimonial */}
-              {project.testimonial && (
+              {project.testimonial && project.testimonial.quote && (
                 <div className="relative p-8 rounded-2xl bg-gradient-to-br from-white to-purple-50 shadow-xl border border-gray-100">
                   <div className={`absolute top-0 left-0 w-24 h-24 bg-gradient-to-r ${project.gradient} opacity-10 rounded-br-full`}></div>
                   <div className="relative">
