@@ -46,6 +46,7 @@ interface Project {
   };
   link?: string;
   featured?: boolean;
+  order?: number;
   // Extended fields for detail page
   overview?: string;
   challenge?: string;
@@ -110,6 +111,7 @@ export function Admin() {
     metrics: { users: '', rating: '', growth: '' },
     link: '',
     featured: false,
+    order: undefined,
     overview: '',
     challenge: '',
     solution: '',
@@ -249,7 +251,13 @@ export function Admin() {
       if (data.success && data.projects) {
         // Projects are returned directly, not wrapped in {key, value} format
         const projectsList = data.projects.filter((project: any) => project && project.id && project.title);
-        console.log('Filtered projects:', projectsList.length);
+        // Sort by order field (ascending), projects without order go to end
+        projectsList.sort((a: any, b: any) => {
+          const orderA = a.order ?? 9999;
+          const orderB = b.order ?? 9999;
+          return orderA - orderB;
+        });
+        console.log('Filtered and sorted projects:', projectsList.length);
         setProjects(projectsList);
       } else {
         setProjects([]);
@@ -1683,6 +1691,19 @@ export function Admin() {
                 </div>
               </div>
               <div className="mb-4">
+                <label className="block text-sm text-gray-300 mb-2">
+                  Display Order <span className="text-xs text-gray-500">(Lower numbers appear first)</span>
+                </label>
+                <input
+                  type="number"
+                  value={projectForm.order ?? ''}
+                  onChange={(e) => setProjectForm({ ...projectForm, order: e.target.value ? parseInt(e.target.value) : undefined })}
+                  placeholder="e.g., 1, 2, 3..."
+                  min="0"
+                  className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+              <div className="mb-4">
                 <label className="block text-sm text-gray-300 mb-2">Description</label>
                 <textarea
                   value={projectForm.description || ''}
@@ -2158,6 +2179,9 @@ export function Admin() {
                     className="bg-white/5 rounded-lg p-4 flex items-center justify-between hover:bg-white/10 transition-colors"
                   >
                     <div className="flex items-center gap-3">
+                      <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-purple-500/20 text-purple-400 font-bold text-sm">
+                        {project.order ?? '—'}
+                      </div>
                       <button
                         onClick={() => handleEditProject(project)}
                         className="p-2 rounded-lg transition-colors bg-blue-500/20 text-blue-400"

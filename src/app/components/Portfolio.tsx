@@ -214,7 +214,13 @@ export function Portfolio({ onViewAll }: { onViewAll?: () => void }) {
         if (data.success && data.projects && data.projects.length > 0) {
           // Projects are returned directly, not wrapped in {key, value} format
           const projectsList = data.projects.filter((project: any) => project && project.id && project.title);
-          console.log('Filtered projects for display:', projectsList);
+          // Sort by order field (ascending), projects without order go to end
+          projectsList.sort((a: any, b: any) => {
+            const orderA = a.order ?? 9999;
+            const orderB = b.order ?? 9999;
+            return orderA - orderB;
+          });
+          console.log('Filtered and sorted projects for display:', projectsList);
           // Show only first 6 projects on home page
           setProjects(projectsList.slice(0, 6));
         } else {

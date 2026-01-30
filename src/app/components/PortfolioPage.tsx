@@ -214,6 +214,12 @@ export function PortfolioPage() {
         
         if (data.success && data.projects && data.projects.length > 0) {
           const projectsList = data.projects.filter((project: any) => project && project.id && project.title);
+          // Sort by order field (ascending), projects without order go to end
+          projectsList.sort((a: any, b: any) => {
+            const orderA = a.order ?? 9999;
+            const orderB = b.order ?? 9999;
+            return orderA - orderB;
+          });
           setProjects(projectsList);
         } else {
           setProjects([]);
