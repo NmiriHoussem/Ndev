@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { 
   Upload, LogOut, Save, X, Check, Image as ImageIcon, 
-  FileText, Layout, Plus, Edit2, Trash2, Power, Eye, EyeOff, Folder, Users, Share2, Star 
+  FileText, Layout, Plus, Edit2, Trash2, Power, Eye, EyeOff, Folder, Users, Share2, Star, GripVertical 
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { supabase } from '../../../utils/supabase/client';
@@ -9,6 +9,8 @@ import { projectId, publicAnonKey } from '../../../utils/supabase/info';
 import { SocialMediaManager } from './SocialMediaManager';
 import { FaviconManager } from './FaviconManager';
 import { OGImageManager } from './OGImageManager';
+import { DndProvider, useDrag, useDrop } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 const ADMIN_EMAIL = 'houssem.addin@gmail.com';
 const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-a2e14eff`;
@@ -71,6 +73,82 @@ interface Client {
   name: string;
   logo: string;
 }
+
+interface DraggableProjectItemProps {
+  project: Project;
+  index: number;
+  moveProject: (dragIndex: number, hoverIndex: number) => void;
+  onEdit: (project: Project) => void;
+  onDelete: (id: string) => void;
+}
+
+const DraggableProjectItem = ({ project, index, moveProject, onEdit, onDelete }: DraggableProjectItemProps) => {
+  const [{ isDragging }, drag, preview] = useDrag({
+    type: 'PROJECT',
+    item: { index },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+
+  const [, drop] = useDrop({
+    accept: 'PROJECT',
+    hover: (item: { index: number }) => {
+      if (item.index !== index) {
+        moveProject(item.index, index);
+        item.index = index;
+      }
+    },
+  });
+
+  return (
+    <div
+      ref={(node) => preview(drop(node))}
+      className={`bg-white/5 rounded-lg p-4 flex items-center justify-between hover:bg-white/10 transition-colors ${
+        isDragging ? 'opacity-50' : ''
+      }`}
+    >
+      <div className="flex items-center gap-3 flex-1">
+        <div
+          ref={drag}
+          className="cursor-move p-2 rounded-lg transition-colors bg-gray-500/20 text-gray-400 hover:bg-gray-500/30"
+        >
+          <GripVertical size={20} />
+        </div>
+        <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-purple-500/20 text-purple-400 font-bold text-sm">
+          {project.order ?? '—'}
+        </div>
+        <button
+          onClick={() => onEdit(project)}
+          className="p-2 rounded-lg transition-colors bg-blue-500/20 text-blue-400"
+        >
+          <Edit2 size={20} />
+        </button>
+        <div>
+          <h4 className="text-white font-medium">{project.title}</h4>
+          <p className="text-gray-400 text-sm">Category: {project.category}</p>
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+          project.featured
+            ? 'bg-green-500/20 text-green-400'
+            : 'bg-gray-500/20 text-gray-400'
+        }`}>
+          {project.featured ? 'Featured' : 'Not Featured'}
+        </span>
+        <Button
+          onClick={() => onDelete(project.id)}
+          variant="outline"
+          className="border-red-500/50 text-red-400 hover:bg-red-500/10"
+          size="sm"
+        >
+          <Trash2 size={16} />
+        </Button>
+      </div>
+    </div>
+  );
+};
 
 export function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -766,6 +844,7 @@ export function Admin() {
       metrics: { users: '', rating: '', growth: '' },
       link: '',
       featured: false,
+      order: undefined,
       overview: '',
       challenge: '',
       solution: '',
@@ -780,6 +859,48 @@ export function Admin() {
       keyFeatures: [],
     });
     setShowProjectForm(false);
+  };
+
+  const handleMoveProject = async (dragIndex: number, hoverIndex: number) => {
+    const draggedProject = projects[dragIndex];
+    const updatedProjects = [...projects];
+    
+    // Remove dragged item
+    updatedProjects.splice(dragIndex, 1);
+    // Insert at new position
+    updatedProjects.splice(hoverIndex, 0, draggedProject);
+    
+    // Update local state immediately for smooth UI
+    setProjects(updatedProjects);
+    
+    // Update order values for all projects
+    const reorderedProjects = updatedProjects.map((project, index) => ({
+      ...project,
+      order: index + 1
+    }));
+    
+    // Save all updated orders to backend
+    try {
+      await Promise.all(
+        reorderedProjects.map(project =>
+          fetch(`${API_BASE}/projects/${project.id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${publicAnonKey}`
+            },
+            body: JSON.stringify(project)
+          })
+        )
+      );
+      setProjects(reorderedProjects);
+      console.log('Project order updated successfully');
+    } catch (error) {
+      console.error('Error updating project order:', error);
+      setError('Failed to update project order');
+      // Reload projects to restore correct order
+      loadProjects();
+    }
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1105,8 +1226,9 @@ export function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0A0A0F] via-[#0F0F1A] to-[#1A1A2E] p-4">
-      <div className="container mx-auto max-w-7xl">
+    <DndProvider backend={HTML5Backend}>
+      <div className="min-h-screen bg-gradient-to-br from-[#0A0A0F] via-[#0F0F1A] to-[#1A1A2E] p-4">
+        <div className="container mx-auto max-w-7xl">
         {/* Header */}
         <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 mb-6 border border-white/20">
           <div className="flex items-center justify-between">
@@ -2052,6 +2174,14 @@ export function Admin() {
 
             {/* Projects List */}
             <div className="space-y-3">
+              {projects.length > 0 && (
+                <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 mb-3">
+                  <p className="text-blue-300 text-sm flex items-center gap-2">
+                    <GripVertical size={16} />
+                    <span>Drag and drop projects to reorder them. The order will update automatically.</span>
+                  </p>
+                </div>
+              )}
               {loading ? (
                 <p className="text-gray-400 text-center py-8">Loading...</p>
               ) : projects.length === 0 ? (
@@ -2094,6 +2224,43 @@ export function Admin() {
                     >
                       <Power size={20} className="mr-2" />
                       Load Default Projects
+                    </Button>
+                    <Button
+                      onClick={async () => {
+                        try {
+                          setLoading(true);
+                          // Auto-assign order numbers to all projects
+                          const reorderedProjects = projects.map((project, index) => ({
+                            ...project,
+                            order: index + 1
+                          }));
+                          
+                          await Promise.all(
+                            reorderedProjects.map(project =>
+                              fetch(`${API_BASE}/projects/${project.id}`, {
+                                method: 'PUT',
+                                headers: {
+                                  'Content-Type': 'application/json',
+                                  'Authorization': `Bearer ${publicAnonKey}`
+                                },
+                                body: JSON.stringify(project)
+                              })
+                            )
+                          );
+                          
+                          await loadProjects();
+                          showSuccess();
+                        } catch (error) {
+                          console.error('Error auto-numbering projects:', error);
+                          setError('Failed to auto-number projects');
+                        } finally {
+                          setLoading(false);
+                        }
+                      }}
+                      className="bg-gradient-to-r from-purple-600 to-pink-600 text-white"
+                    >
+                      <Star size={20} className="mr-2" />
+                      Auto-Number Projects
                     </Button>
                     <Button
                       onClick={async () => {
@@ -2173,44 +2340,15 @@ export function Admin() {
                   </div>
                 </div>
               ) : (
-                projects.map((project) => (
-                  <div
+                projects.map((project, index) => (
+                  <DraggableProjectItem
                     key={project.id}
-                    className="bg-white/5 rounded-lg p-4 flex items-center justify-between hover:bg-white/10 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-purple-500/20 text-purple-400 font-bold text-sm">
-                        {project.order ?? '—'}
-                      </div>
-                      <button
-                        onClick={() => handleEditProject(project)}
-                        className="p-2 rounded-lg transition-colors bg-blue-500/20 text-blue-400"
-                      >
-                        <Edit2 size={20} />
-                      </button>
-                      <div>
-                        <h4 className="text-white font-medium">{project.title}</h4>
-                        <p className="text-gray-400 text-sm">Category: {project.category}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        project.featured
-                          ? 'bg-green-500/20 text-green-400'
-                          : 'bg-gray-500/20 text-gray-400'
-                      }`}>
-                        {project.featured ? 'Featured' : 'Not Featured'}
-                      </span>
-                      <Button
-                        onClick={() => handleDeleteProject(project.id)}
-                        variant="outline"
-                        className="border-red-500/50 text-red-400 hover:bg-red-500/10"
-                        size="sm"
-                      >
-                        <Trash2 size={16} />
-                      </Button>
-                    </div>
-                  </div>
+                    project={project}
+                    index={index}
+                    moveProject={handleMoveProject}
+                    onEdit={handleEditProject}
+                    onDelete={handleDeleteProject}
+                  />
                 ))
               )}
             </div>
@@ -2484,5 +2622,6 @@ export function Admin() {
         )}
       </div>
     </div>
+    </DndProvider>
   );
 }
