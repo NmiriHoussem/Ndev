@@ -14,7 +14,7 @@ const serviceCategories = [
         icon: Monitor,
         title: 'Web Development',
         description: 'Custom web applications built with modern technologies and best practices.',
-        features: ['React & Next.js', 'API Integration', 'Responsive Design'],
+        features: ['React, Next.js, Vue.js', 'API Integration', 'Responsive Design'],
       },
       {
         icon: Rocket,
