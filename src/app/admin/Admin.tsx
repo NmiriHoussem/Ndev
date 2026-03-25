@@ -66,6 +66,12 @@ interface Project {
   };
   gallery?: string[];
   keyFeatures?: string[];
+  contributor?: {
+    name: string;
+    role: string;
+    avatar?: string;
+    profileUrl?: string;
+  };
 }
 
 interface Client {
@@ -202,6 +208,7 @@ export function Admin() {
     testimonial: { quote: '', author: '', position: '' },
     gallery: [],
     keyFeatures: [],
+    contributor: { name: '', role: '', avatar: '', profileUrl: '' },
   });
   
   // Clients state
@@ -739,6 +746,7 @@ export function Admin() {
         testimonial: { quote: '', author: '', position: '' },
         gallery: [],
         keyFeatures: [],
+        contributor: { name: '', role: '', avatar: '', profileUrl: '' },
       });
       setShowProjectForm(false);
       loadProjects();
@@ -789,6 +797,7 @@ export function Admin() {
         testimonial: { quote: '', author: '', position: '' },
         gallery: [],
         keyFeatures: [],
+        contributor: { name: '', role: '', avatar: '', profileUrl: '' },
       });
       setShowProjectForm(false);
       loadProjects();
@@ -857,6 +866,7 @@ export function Admin() {
       testimonial: { quote: '', author: '', position: '' },
       gallery: [],
       keyFeatures: [],
+      contributor: { name: '', role: '', avatar: '', profileUrl: '' },
     });
     setShowProjectForm(false);
   };
@@ -2145,6 +2155,55 @@ export function Admin() {
                           value={projectForm.testimonial?.position || ''}
                           onChange={(e) => setProjectForm({ ...projectForm, testimonial: { ...projectForm.testimonial, position: e.target.value } as any })}
                           placeholder="CEO, Company Name"
+                          className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border border-gray-700 rounded-lg p-4 mb-4">
+                  <h4 className="text-sm font-semibold text-gray-300 mb-3">Project Contributor / Collaborator Credit</h4>
+                  <p className="text-xs text-gray-500 mb-3">Add credit for external designers or collaborators who worked on this project</p>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-gray-400 mb-1">Contributor Name</label>
+                      <input
+                        type="text"
+                        value={projectForm.contributor?.name || ''}
+                        onChange={(e) => setProjectForm({ ...projectForm, contributor: { ...projectForm.contributor, name: e.target.value } as any })}
+                        placeholder="Abdelhak Brahem"
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-400 mb-1">Role / Contribution</label>
+                      <input
+                        type="text"
+                        value={projectForm.contributor?.role || ''}
+                        onChange={(e) => setProjectForm({ ...projectForm, contributor: { ...projectForm.contributor, role: e.target.value } as any })}
+                        placeholder="the amazing design work on this project"
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      />
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs text-gray-400 mb-1">Avatar URL</label>
+                        <input
+                          type="text"
+                          value={projectForm.contributor?.avatar || ''}
+                          onChange={(e) => setProjectForm({ ...projectForm, contributor: { ...projectForm.contributor, avatar: e.target.value } as any })}
+                          placeholder="https://example.com/avatar.jpg"
+                          className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-400 mb-1">Profile URL (Behance, Portfolio, etc.)</label>
+                        <input
+                          type="text"
+                          value={projectForm.contributor?.profileUrl || ''}
+                          onChange={(e) => setProjectForm({ ...projectForm, contributor: { ...projectForm.contributor, profileUrl: e.target.value } as any })}
+                          placeholder="https://www.behance.net/username"
                           className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
                         />
                       </div>

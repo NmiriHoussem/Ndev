@@ -52,6 +52,13 @@ interface ProjectDetailData {
   gallery?: string[];
   keyFeatures?: string[];
   slug?: string;
+  // Contributor/Collaborator credit
+  contributor?: {
+    name: string;
+    role: string;
+    avatar?: string;
+    profileUrl?: string;
+  };
 }
 
 interface ProjectDetailProps {
@@ -181,6 +188,64 @@ export function ProjectDetail({ projectId, onBack }: ProjectDetailProps) {
             <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl">
               {project.description}
             </p>
+
+            {/* Contributor Shoutout Section */}
+            {project.contributor && (
+              <motion.div
+                className="mb-8 max-w-3xl"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+              >
+                <div className="relative p-4 rounded-xl bg-gradient-to-r from-purple-50/80 to-blue-50/80 backdrop-blur-sm border border-purple-200/50 shadow-sm hover:shadow-md transition-all group">
+                  <div className="flex items-center gap-4">
+                    {/* Avatar */}
+                    {project.contributor.avatar && (
+                      <div className="flex-shrink-0">
+                        <ImageWithFallback
+                          src={project.contributor.avatar}
+                          alt={project.contributor.name}
+                          className="w-12 h-12 rounded-full object-cover ring-2 ring-purple-200 group-hover:ring-purple-300 transition-all"
+                        />
+                      </div>
+                    )}
+                    
+                    {/* Text Content */}
+                    <div className="flex-1">
+                      <p className="text-gray-700 leading-relaxed">
+                        <span className="font-semibold text-gray-900">Shoutout to </span>
+                        {project.contributor.profileUrl ? (
+                          <a
+                            href={project.contributor.profileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-semibold text-purple-600 hover:text-purple-700 underline decoration-purple-300 hover:decoration-purple-500 transition-colors"
+                          >
+                            {project.contributor.name}
+                          </a>
+                        ) : (
+                          <span className="font-semibold text-purple-600">{project.contributor.name}</span>
+                        )}
+                        <span className="text-gray-700"> for {project.contributor.role}</span>
+                      </p>
+                      
+                      {/* Link with Icon */}
+                      {project.contributor.profileUrl && (
+                        <a
+                          href={project.contributor.profileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 mt-1 text-sm text-purple-600 hover:text-purple-700 font-medium group-hover:gap-2 transition-all"
+                        >
+                          View on Behance
+                          <ExternalLink size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
 
             {/* Meta Info */}
             <div className="flex flex-wrap gap-6 mb-8">
