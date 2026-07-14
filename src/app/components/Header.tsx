@@ -19,11 +19,11 @@ export function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Load colored logo from database
+  // Load white logo from database (header is on dark background)
   useEffect(() => {
     const loadLogo = async () => {
       try {
-        const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server-a2e14eff/kv/get?key=siteLogo`, {
+        const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server-a2e14eff/kv/get?key=siteLogoWhite`, {
           headers: {
             'Authorization': `Bearer ${publicAnonKey}`,
           }
