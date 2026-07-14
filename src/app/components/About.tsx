@@ -1,248 +1,115 @@
 import { motion } from 'motion/react';
-import { Users, Target, Award, Zap, TrendingUp, Heart, Shield, Rocket, Star, Coffee, Code2, Smile } from 'lucide-react';
+import { Check } from 'lucide-react';
 
-const features = [
+const reasons = [
   {
-    icon: Users,
-    title: 'Dream Team',
-    description: 'Talented developers, designers, and strategists who eat, sleep, and breathe digital.',
-    gradient: 'from-blue-500 to-cyan-500',
-    rotation: 0,
+    title: 'Domain fluency',
+    description:
+      'We speak banking, compliance and KYC. Less onboarding, faster decisions, designs that pass review.',
   },
   {
-    icon: Target,
-    title: 'Your Vision',
-    description: 'We don\'t just build what you ask for—we bring your wildest ideas to life.',
-    gradient: 'from-purple-500 to-pink-500',
-    rotation: 45,
+    title: 'Design systems, not just screens',
+    description:
+      'Every project ships with a documented, developer-ready system your team can build on.',
   },
   {
-    icon: Award,
-    title: 'Quality First',
-    description: 'Every pixel, every line of code—crafted with obsessive attention to detail.',
-    gradient: 'from-yellow-500 to-orange-500',
-    rotation: 90,
+    title: 'Senior attention',
+    description:
+      "Your product is designed by the people you talked to, not handed down a chain.",
   },
   {
-    icon: Zap,
-    title: 'Lightning Fast',
-    description: 'Quick turnaround times because we know your time is precious.',
-    gradient: 'from-green-500 to-emerald-500',
-    rotation: 135,
+    title: 'Built to ship',
+    description:
+      "We work hand-in-hand with your developers until it's live, not until the handoff file.",
   },
-];
-
-const stats = [
-  { icon: Coffee, value: '∞', label: 'Cups of Coffee', gradient: 'from-amber-500 to-orange-600' },
-  { icon: Code2, value: '1M+', label: 'Lines of Code', gradient: 'from-blue-500 to-cyan-500' },
-  { icon: Smile, value: '100%', label: 'Fun Guaranteed', gradient: 'from-pink-500 to-rose-500' },
-  { icon: Star, value: '5★', label: 'Average Rating', gradient: 'from-purple-500 to-indigo-500' },
 ];
 
 export function About() {
   return (
-    <section id="about" className="py-32 relative overflow-hidden">
-      {/* Ultra creative background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-white to-blue-50">
-        {/* Animated mesh gradient */}
-        <motion.div
-          className="absolute inset-0 opacity-30"
-          animate={{
-            background: [
-              'radial-gradient(circle at 20% 50%, rgba(168,85,247,0.15), transparent 50%)',
-              'radial-gradient(circle at 80% 50%, rgba(59,130,246,0.15), transparent 50%)',
-              'radial-gradient(circle at 20% 50%, rgba(168,85,247,0.15), transparent 50%)',
-            ],
-          }}
-          transition={{ duration: 10, repeat: Infinity }}
-        />
-      </div>
+    <section id="about" className="py-32" style={{ background: '#F8FAFC' }}>
+      <div className="container mx-auto px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
 
-      {/* Floating geometric shapes */}
-      <motion.div
-        className="absolute top-20 right-20 w-40 h-40 border-4 border-purple-200/40 rounded-full"
-        animate={{
-          y: [0, -40, 0],
-          rotate: [0, 180, 360],
-        }}
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-      />
-      <motion.div
-        className="absolute bottom-20 left-20 w-32 h-32 bg-gradient-to-br from-blue-300/20 to-purple-300/20"
-        style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }}
-        animate={{
-          rotate: [0, -360],
-          scale: [1, 1.2, 1],
-        }}
-        transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-      />
-
-      <div className="container mx-auto px-4 relative z-10">
-        {/* Creative header */}
-        <motion.div
-          className="text-center mb-20"
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-        >
-          <motion.div
-            className="inline-block mb-6"
-            initial={{ scale: 0 }}
-            whileInView={{ scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ type: "spring", duration: 0.8 }}
-          >
-            <div className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-purple-100 via-pink-100 to-blue-100 border-2 border-white shadow-xl">
-              <motion.div
-                animate={{ rotate: [0, 360] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-              >
-                <Heart className="text-pink-600" size={24} />
-              </motion.div>
-              <span className="text-lg bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
-                About Us
-              </span>
-            </div>
-          </motion.div>
-
-          <h2 className="text-5xl md:text-6xl lg:text-7xl mb-8 leading-tight">
-            We're Not Your{' '}
-            <span className="relative inline-block">
-              <motion.span
-                className="absolute -inset-3 bg-gradient-to-r from-purple-300 via-pink-300 to-blue-300 blur-2xl opacity-40"
-                animate={{
-                  scale: [1, 1.3, 1],
-                  rotate: [0, 180, 360],
+            {/* Left — heading */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+            >
+              <div
+                className="inline-block mb-4"
+                style={{
+                  fontSize: '.75rem',
+                  fontWeight: 700,
+                  letterSpacing: '.1em',
+                  textTransform: 'uppercase',
+                  color: '#2D6BFF',
                 }}
-                transition={{ duration: 8, repeat: Infinity }}
-              ></motion.span>
-              <span className="relative bg-gradient-to-r from-purple-600 via-pink-500 to-blue-600 bg-clip-text text-transparent">
-                Average Agency
-              </span>
-            </span>
-          </h2>
-          <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            We're a crew of passionate creators who love turning crazy ideas into digital reality
-          </p>
-        </motion.div>
+              >
+                Why us
+              </div>
 
-        {/* Feature Cards - Creative orbit layout */}
-        <div className="max-w-6xl mx-auto mb-24">
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, idx) => {
-              const IconComponent = feature.icon;
-              return (
+              <h2
+                className="mb-6 leading-tight"
+                style={{
+                  fontSize: 'clamp(2rem, 4vw, 3.25rem)',
+                  fontWeight: 800,
+                  color: '#0F172A',
+                  letterSpacing: '-1px',
+                }}
+              >
+                Why teams with high-stakes products{' '}
+                <span style={{ color: '#2D6BFF' }}>choose us</span>
+              </h2>
+
+              <p style={{ fontSize: '1.0625rem', color: '#64748B', lineHeight: 1.75 }}>
+                We have deep expertise in regulated, complex digital products — the kind where UX
+                mistakes have real consequences.
+              </p>
+            </motion.div>
+
+            {/* Right — bullet points */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+              className="space-y-8"
+            >
+              {reasons.map((reason, idx) => (
                 <motion.div
-                  key={feature.title}
-                  initial={{ opacity: 0, scale: 0.5, rotate: -180 }}
-                  whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ 
-                    duration: 0.8, 
-                    delay: idx * 0.1,
-                    type: "spring",
-                  }}
-                  whileHover={{ 
-                    y: -15, 
-                    rotate: feature.rotation / 10,
-                    scale: 1.05,
-                  }}
-                >
-                  <div className="relative h-full group">
-                    {/* Glow */}
-                    <motion.div
-                      className={`absolute -inset-1 bg-gradient-to-br ${feature.gradient} rounded-3xl blur-xl opacity-0 group-hover:opacity-40 transition-opacity`}
-                    ></motion.div>
-
-                    {/* Card */}
-                    <div className="relative h-full bg-white/80 backdrop-blur-xl rounded-3xl p-8 border-2 border-white shadow-xl">
-                      {/* Icon */}
-                      <motion.div
-                        className="mb-6 inline-block"
-                        whileHover={{ rotate: 360, scale: 1.2 }}
-                        transition={{ duration: 0.6 }}
-                      >
-                        <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center shadow-lg`}>
-                          <IconComponent className="text-white" size={36} />
-                        </div>
-                      </motion.div>
-
-                      <h3 className="text-2xl mb-3 text-gray-900">{feature.title}</h3>
-                      <p className="text-gray-600 leading-relaxed">{feature.description}</p>
-
-                      {/* Decorative corner */}
-                      <div className={`absolute top-4 right-4 w-3 h-3 rounded-full bg-gradient-to-br ${feature.gradient}`}></div>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Stats - Creative ticker style */}
-        <motion.div
-          className="max-w-5xl mx-auto mb-20"
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-        >
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {stats.map((stat, idx) => {
-              const StatIcon = stat.icon;
-              return (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, y: 40 }}
+                  key={reason.title}
+                  initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: idx * 0.15 }}
-                  whileHover={{ scale: 1.08, rotate: [0, -5, 5, 0] }}
+                  transition={{ delay: idx * 0.1, duration: 0.5 }}
+                  className="flex gap-4"
                 >
-                  <div className="relative overflow-hidden rounded-3xl group">
-                    {/* Animated gradient background */}
-                    <motion.div
-                      className={`absolute inset-0 bg-gradient-to-br ${stat.gradient}`}
-                      animate={{
-                        backgroundPosition: ['0% 0%', '100% 100%', '0% 0%'],
-                      }}
-                      transition={{ duration: 8, repeat: Infinity }}
-                    ></motion.div>
-
-                    {/* Decorative elements */}
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
-                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
-                    <div className="absolute top-1/2 left-1/2 w-40 h-40 bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-
-                    <div className="relative z-10 p-8 text-white">
-                      <motion.div
-                        whileHover={{ rotate: 360 }}
-                        transition={{ duration: 0.6 }}
-                      >
-                        <StatIcon className="mb-4 opacity-90" size={36} />
-                      </motion.div>
-                      <div className="text-5xl mb-2">{stat.value}</div>
-                      <div className="text-sm opacity-90">{stat.label}</div>
-                    </div>
+                  <div
+                    className="flex-shrink-0 mt-0.5 w-6 h-6 rounded-full flex items-center justify-center"
+                    style={{ background: 'rgba(45,107,255,.1)' }}
+                  >
+                    <Check size={13} style={{ color: '#2D6BFF' }} strokeWidth={2.5} />
+                  </div>
+                  <div>
+                    <h3
+                      className="font-semibold mb-1"
+                      style={{ fontSize: '1rem', color: '#0F172A' }}
+                    >
+                      {reason.title}
+                    </h3>
+                    <p style={{ color: '#64748B', lineHeight: 1.65, fontSize: '.9375rem' }}>
+                      {reason.description}
+                    </p>
                   </div>
                 </motion.div>
-              );
-            })}
-          </div>
-        </motion.div>
+              ))}
+            </motion.div>
 
-        {/* Company story - Creative asymmetric layout */}
-        <motion.div
-          className="max-w-6xl mx-auto"
-          initial={{ opacity: 0, y: 60 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-        >
-          {/* Removed "Making Apps and Games" card section */}
-        </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );

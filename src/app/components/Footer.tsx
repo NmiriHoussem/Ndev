@@ -12,14 +12,14 @@ const socialLinks = [
 
 const quickLinks = {
   services: [
-    { label: 'Web Development', id: 'services' },
     { label: 'UI/UX Design', id: 'services' },
+    { label: 'Branding & Design Systems', id: 'services' },
+    { label: 'Web Development', id: 'services' },
     { label: 'SaaS Products', id: 'services' },
-    { label: 'Game Development', id: 'services' },
   ],
   company: [
-    { label: 'About Us', id: 'about' },
-    { label: 'Portfolio', id: 'portfolio' },
+    { label: 'Work', id: 'portfolio' },
+    { label: 'About', id: 'about' },
     { label: 'Contact', id: 'contact' },
   ],
 };
@@ -102,12 +102,9 @@ export function Footer() {
   };
 
   return (
-    <footer className="relative overflow-hidden">
-      {/* Gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-purple-900/50 to-blue-900/50">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(168,85,247,0.15),transparent_50%)]"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(59,130,246,0.15),transparent_50%)]"></div>
-      </div>
+    <footer className="relative overflow-hidden" style={{ background: '#0A1226' }}>
+      {/* Top border */}
+      <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'rgba(255,255,255,.08)' }} />
 
       <div className="container mx-auto px-4 py-16 relative z-10">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
@@ -121,8 +118,8 @@ export function Footer() {
             <div className="mb-6">
               <img src={logoWhite} alt="NdevDigital" className="h-20" />
             </div>
-            <p className="text-gray-300 leading-relaxed mb-6">
-              Creating Effective Experiences, From Design to Delivery.
+            <p className="leading-relaxed mb-6" style={{ color: '#8A97B8' }}>
+              Product design studio for complex digital platforms. Tunis · Europe.
             </p>
             
             {/* Social Links */}
@@ -141,11 +138,12 @@ export function Footer() {
                     whileHover={{ y: -4, scale: 1.1 }}
                     className="relative"
                   >
-                    <div className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all ${
-                      hoveredSocial === idx 
-                        ? `bg-gradient-to-br ${social.gradient} shadow-lg` 
-                        : 'bg-white/10 hover:bg-white/20'
-                    }`}>
+                    <div style={{
+                      width: '40px', height: '40px', borderRadius: '8px',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      background: hoveredSocial === idx ? '#2D6BFF' : 'rgba(255,255,255,.08)',
+                      transition: 'background .2s',
+                    }}>
                       <IconComponent size={20} className="text-white" />
                     </div>
                   </motion.a>
@@ -161,7 +159,7 @@ export function Footer() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            <h3 className="text-xl mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+            <h3 className="text-base font-semibold mb-6" style={{ color: '#EAF0FF' }}>
               Services
             </h3>
             <ul className="space-y-3">
@@ -169,9 +167,9 @@ export function Footer() {
                 <li key={link.label}>
                   <button 
                     onClick={() => scrollToSection(link.id)} 
-                    className="text-gray-300 hover:text-white transition-colors flex items-center gap-2 group"
+                    className="transition-colors flex items-center gap-2 group" style={{ color: '#8A97B8' }} onMouseEnter={e => (e.currentTarget.style.color = '#EAF0FF')} onMouseLeave={e => (e.currentTarget.style.color = '#8A97B8')}
                   >
-                    <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="w-1.5 h-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: '#2D6BFF' }}></div>
                     {link.label}
                   </button>
                 </li>
@@ -186,7 +184,7 @@ export function Footer() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <h3 className="text-xl mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+            <h3 className="text-base font-semibold mb-6" style={{ color: '#EAF0FF' }}>
               Company
             </h3>
             <ul className="space-y-3">
@@ -194,9 +192,9 @@ export function Footer() {
                 <li key={link.label}>
                   <button 
                     onClick={() => scrollToSection(link.id)} 
-                    className="text-gray-300 hover:text-white transition-colors flex items-center gap-2 group"
+                    className="transition-colors flex items-center gap-2 group" style={{ color: '#8A97B8' }} onMouseEnter={e => (e.currentTarget.style.color = '#EAF0FF')} onMouseLeave={e => (e.currentTarget.style.color = '#8A97B8')}
                   >
-                    <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="w-1.5 h-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: '#2D6BFF' }}></div>
                     {link.label}
                   </button>
                 </li>
@@ -211,7 +209,7 @@ export function Footer() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <h3 className="text-xl mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+            <h3 className="text-base font-semibold mb-6" style={{ color: '#EAF0FF' }}>
               Contact
             </h3>
             <ul className="space-y-4 mb-6">
@@ -220,39 +218,40 @@ export function Footer() {
                   href="mailto:contact@ndev.digital"
                   className="text-gray-300 hover:text-white transition-colors flex items-center gap-3 group"
                 >
-                  <Mail size={18} className="text-purple-400 group-hover:text-purple-300 transition-colors" />
-                  <span className="text-sm">contact@ndev.digital</span>
+                  <Mail size={18} style={{ color: '#2D6BFF' }} />
+                  <span className="text-sm" style={{ color: '#8A97B8' }}>contact@ndev.digital</span>
                 </a>
               </li>
               <li>
-                <a 
+                <a
                   href="tel:+21654882779"
-                  className="text-gray-300 hover:text-white transition-colors flex items-center gap-3 group"
+                  className="flex items-center gap-3"
+                  style={{ color: '#8A97B8' }}
                 >
-                  <Phone size={18} className="text-blue-400 group-hover:text-blue-300 transition-colors" />
+                  <Phone size={18} style={{ color: '#8A97B8' }} />
                   <span className="text-sm">+216 54 882 779</span>
                 </a>
               </li>
               <li>
-                <div className="text-gray-300 flex items-start gap-3">
-                  <MapPin size={18} className="text-green-400 mt-0.5 flex-shrink-0" />
-                  <span className="text-sm">Immeuble Tamayouz 1082<br />Centre Urbain Nord-Tunis</span>
+                <div className="flex items-start gap-3" style={{ color: '#8A97B8' }}>
+                  <MapPin size={18} className="mt-0.5 flex-shrink-0" style={{ color: '#8A97B8' }} />
+                  <span className="text-sm" style={{ color: '#8A97B8' }}>Immeuble Tamayouz 1082<br />Centre Urbain Nord-Tunis</span>
                 </div>
               </li>
             </ul>
             
             {/* Legal Links */}
-            <div className="space-y-2 pt-4 border-t border-white/10">
+            <div className="space-y-2 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,.08)' }}>
               <button 
                 onClick={() => navigateToPage('/privacy-policy')}
-                className="text-gray-300 hover:text-white transition-colors flex items-center gap-2 group text-sm"
+                className="transition-colors flex items-center gap-2 group text-sm" style={{ color: '#8A97B8' }} onMouseEnter={e => (e.currentTarget.style.color = '#EAF0FF')} onMouseLeave={e => (e.currentTarget.style.color = '#8A97B8')}
               >
                 <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 Privacy Policy
               </button>
               <button 
                 onClick={() => navigateToPage('/terms-of-service')}
-                className="text-gray-300 hover:text-white transition-colors flex items-center gap-2 group text-sm"
+                className="transition-colors flex items-center gap-2 group text-sm" style={{ color: '#8A97B8' }} onMouseEnter={e => (e.currentTarget.style.color = '#EAF0FF')} onMouseLeave={e => (e.currentTarget.style.color = '#8A97B8')}
               >
                 <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 Terms of Service
@@ -263,22 +262,22 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <motion.div
-          className="border-t border-white/10 pt-8"
+          className="pt-8" style={{ borderTop: '1px solid rgba(255,255,255,.08)' }}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-gray-300 text-sm flex items-center gap-2">
+            <p className="text-sm flex items-center gap-2" style={{ color: '#8A97B8' }}>
               &copy; {new Date().getFullYear()} NdevDigital. Made with{' '}
               <Heart className="text-red-500 fill-red-500" size={16} />{' '}
               for amazing clients
             </p>
 
-            <div className="flex items-center gap-6 text-sm text-gray-300">
-              <button onClick={() => navigateToPage('/privacy-policy')} className="hover:text-white transition-colors">Privacy Policy</button>
-              <button onClick={() => navigateToPage('/terms-of-service')} className="hover:text-white transition-colors">Terms of Service</button>
+            <div className="flex items-center gap-6 text-sm" style={{ color: '#8A97B8' }}>
+              <button onClick={() => navigateToPage('/privacy-policy')} style={{ color: '#8A97B8', background: 'none', border: 'none', cursor: 'pointer' }} onMouseEnter={e => (e.currentTarget.style.color = '#EAF0FF')} onMouseLeave={e => (e.currentTarget.style.color = '#8A97B8')}>Privacy Policy</button>
+              <button onClick={() => navigateToPage('/terms-of-service')} style={{ color: '#8A97B8', background: 'none', border: 'none', cursor: 'pointer' }} onMouseEnter={e => (e.currentTarget.style.color = '#EAF0FF')} onMouseLeave={e => (e.currentTarget.style.color = '#8A97B8')}>Terms of Service</button>
             </div>
           </div>
         </motion.div>
@@ -286,7 +285,8 @@ export function Footer() {
         {/* Scroll to Top Button */}
         <motion.button
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 w-14 h-14 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center shadow-2xl hover:shadow-purple-500/50 transition-all z-50"
+          className="fixed bottom-8 right-8 w-12 h-12 rounded-full flex items-center justify-center transition-all z-50"
+          style={{ background: '#2D6BFF', boxShadow: '0 4px 20px rgba(45,107,255,.35)' }}
           initial={{ opacity: 0, scale: 0 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}

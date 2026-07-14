@@ -104,94 +104,79 @@ export function Clients() {
   }
 
   return (
-    <section className="py-20 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute inset-0 opacity-[0.02]" style={{
-        backgroundImage: 'radial-gradient(circle, #8b5cf6 1px, transparent 1px)',
-        backgroundSize: '30px 30px',
-      }}></div>
+    <section className="py-16 relative" style={{ background: '#0A1226' }}>
+      {/* Separator */}
+      <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'rgba(255,255,255,.06)' }} />
 
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container mx-auto px-4">
         <motion.div
-          className="text-center mb-12"
+          className="text-center mb-10"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <motion.div
-            className="inline-block mb-4"
-            initial={{ scale: 0 }}
-            whileInView={{ scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-100 to-blue-100 border border-purple-200">
-              <span className="text-sm bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent font-semibold">
-                Trusted By
-              </span>
-            </div>
-          </motion.div>
-
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            Companies We've{' '}
-            <span className="bg-gradient-to-r from-purple-600 via-pink-500 to-blue-600 bg-clip-text text-transparent">
-              Worked With
-            </span>
-          </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Proud to partner with leading organizations
+          <p style={{ fontSize: '.8125rem', color: '#8A97B8', letterSpacing: '.1em', textTransform: 'uppercase' }}>
+            Trusted by
           </p>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.7 }}
           className="relative"
         >
           {clients.length <= 5 ? (
-            // Simple grid for 5 or fewer clients - no carousel needed
-            <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
+            <div className="flex flex-wrap justify-center items-center gap-10 md:gap-16">
               {clients.map((client, index) => (
                 <motion.div
                   key={client.id}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="flex flex-col items-center justify-center gap-2"
+                  transition={{ duration: 0.5, delay: index * 0.08 }}
+                  className="flex items-center justify-center"
                 >
                   <ImageWithFallback
                     src={client.logo}
                     alt={client.name}
-                    className="max-h-16 max-w-[200px] object-contain opacity-70 hover:opacity-100 transition-all duration-300"
+                    className="object-contain transition-all duration-300"
+                    style={{
+                      maxHeight: '36px',
+                      maxWidth: '160px',
+                      filter: 'grayscale(1) brightness(1.8) opacity(0.55)',
+                    }}
                     title={client.name}
+                    onMouseEnter={e => ((e.currentTarget as HTMLImageElement).style.filter = 'grayscale(1) brightness(2.4) opacity(0.85)')}
+                    onMouseLeave={e => ((e.currentTarget as HTMLImageElement).style.filter = 'grayscale(1) brightness(1.8) opacity(0.55)')}
                   />
-                  <span className="text-xs text-gray-500 font-medium">{client.name}</span>
                 </motion.div>
               ))}
             </div>
           ) : (
-            // Carousel for more than 5 clients
             <Slider {...settings}>
-              {clients.map((client, index) => {
-                console.log(`Rendering client ${index}:`, client.name, 'Logo URL:', client.logo.substring(0, 50));
-                return (
-                  <div key={`${client.id}-${index}`} className="px-4">
-                    <div className="flex flex-col items-center justify-center h-32 gap-2">
-                      <ImageWithFallback
-                        src={client.logo}
-                        alt={client.name}
-                        className="max-h-16 max-w-full object-contain opacity-70 hover:opacity-100 transition-all duration-300"
-                        title={client.name}
-                      />
-                      <span className="text-xs text-gray-500 font-medium">{client.name}</span>
-                    </div>
+              {clients.map((client, index) => (
+                <div key={`${client.id}-${index}`} className="px-6">
+                  <div className="flex items-center justify-center h-16">
+                    <ImageWithFallback
+                      src={client.logo}
+                      alt={client.name}
+                      className="object-contain"
+                      style={{
+                        maxHeight: '36px',
+                        maxWidth: '140px',
+                        filter: 'grayscale(1) brightness(1.8) opacity(0.55)',
+                        transition: 'filter .2s',
+                      }}
+                      title={client.name}
+                      onMouseEnter={e => ((e.currentTarget as HTMLImageElement).style.filter = 'grayscale(1) brightness(2.4) opacity(0.85)')}
+                      onMouseLeave={e => ((e.currentTarget as HTMLImageElement).style.filter = 'grayscale(1) brightness(1.8) opacity(0.55)')}
+                    />
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </Slider>
           )}
         </motion.div>

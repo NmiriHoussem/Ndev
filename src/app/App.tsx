@@ -7,6 +7,7 @@ import { Portfolio } from './components/Portfolio';
 import { PortfolioPage } from './components/PortfolioPage';
 import { Clients } from './components/Clients';
 import { Contact } from './components/Contact';
+import { AuditFlash } from './components/AuditFlash';
 import { Footer } from './components/Footer';
 import { Admin } from './admin/Admin';
 import { PrivacyPolicy } from './components/PrivacyPolicy';
@@ -134,6 +135,7 @@ export default function App() {
         <Services />
         <About />
         <Portfolio onViewAll={() => navigateTo('/portfolio')} />
+        <AuditFlash />
         <Contact />
       </main>
       <Footer />

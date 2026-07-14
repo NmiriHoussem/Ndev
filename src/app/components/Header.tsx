@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, Sparkles } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { projectId, publicAnonKey } from '../../../utils/supabase/info';
 
@@ -103,18 +103,17 @@ export function Header() {
   };
 
   const navLinks = [
-    { label: 'Home', id: 'home' },
+    { label: 'Work', id: 'portfolio' },
     { label: 'Services', id: 'services' },
     { label: 'About', id: 'about' },
-    { label: 'Portfolio', id: 'portfolio' },
     { label: 'Contact', id: 'contact' },
   ];
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled 
-          ? 'bg-white/80 backdrop-blur-xl shadow-2xl shadow-purple-500/10' 
+        isScrolled
+          ? 'bg-[#0A1226]/90 backdrop-blur-xl shadow-lg shadow-black/20'
           : 'bg-transparent'
       }`}
     >
@@ -128,33 +127,45 @@ export function Header() {
             <img src={logo} alt="NdevDigital" className="h-16" />
           </div>
 
-          {/* Desktop Navigation with modern styling */}
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => (
               <button
                 key={link.id}
                 onClick={() => scrollToSection(link.id)}
-                className="relative px-4 py-2 text-gray-700 hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-purple-600 hover:to-blue-600 transition-all duration-300 group"
+                className="relative px-4 py-2 transition-colors duration-200"
+                style={{ color: '#8A97B8' }}
+                onMouseEnter={e => (e.currentTarget.style.color = '#EAF0FF')}
+                onMouseLeave={e => (e.currentTarget.style.color = '#8A97B8')}
               >
                 {link.label}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-600 to-blue-600 group-hover:w-full transition-all duration-300"></span>
               </button>
             ))}
-            <Button
-              onClick={() => scrollToSection('contact')}
-              className="ml-4 bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 hover:shadow-lg hover:shadow-purple-500/50 text-white border-0 relative overflow-hidden group"
+            <button
+              onClick={() => scrollToSection('audit')}
+              className="ml-4"
+              style={{
+                background: '#2D6BFF',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '7px',
+                padding: '9px 18px',
+                fontSize: '.875rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'background .2s',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = '#1a56e8')}
+              onMouseLeave={e => (e.currentTarget.style.background = '#2D6BFF')}
             >
-              <span className="relative z-10 flex items-center gap-2">
-                Get Started
-                <Sparkles size={16} className="group-hover:rotate-12 transition-transform" />
-              </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </Button>
+              Get a UX Flash Audit
+            </button>
           </nav>
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 hover:bg-purple-100 rounded-lg transition-colors"
+            className="md:hidden p-2 rounded-lg transition-colors"
+            style={{ color: '#EAF0FF' }}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -163,23 +174,41 @@ export function Header() {
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <nav className="md:hidden pb-4 border-t mt-2 bg-white/90 backdrop-blur-lg rounded-b-2xl">
-            <div className="flex flex-col gap-2 pt-4">
+          <nav
+            className="md:hidden pb-4 border-t mt-2 rounded-b-xl"
+            style={{ background: '#0E1830', borderColor: 'rgba(255,255,255,.08)' }}
+          >
+            <div className="flex flex-col gap-1 pt-3">
               {navLinks.map((link) => (
                 <button
                   key={link.id}
                   onClick={() => scrollToSection(link.id)}
-                  className="text-gray-700 hover:bg-gradient-to-r hover:from-purple-100 hover:to-blue-100 py-3 px-4 rounded-lg transition-all text-left"
+                  className="py-3 px-4 text-left transition-colors"
+                  style={{ color: '#8A97B8' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = '#EAF0FF')}
+                  onMouseLeave={e => (e.currentTarget.style.color = '#8A97B8')}
                 >
                   {link.label}
                 </button>
               ))}
-              <Button
-                onClick={() => scrollToSection('contact')}
-                className="bg-gradient-to-r from-purple-600 to-blue-600 hover:shadow-lg hover:shadow-purple-500/50 text-white w-full"
-              >
-                Get Started
-              </Button>
+              <div className="px-4 pt-2">
+                <button
+                  onClick={() => scrollToSection('audit')}
+                  className="w-full"
+                  style={{
+                    background: '#2D6BFF',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '7px',
+                    padding: '10px',
+                    fontSize: '.875rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Get a UX Flash Audit
+                </button>
+              </div>
             </div>
           </nav>
         )}
