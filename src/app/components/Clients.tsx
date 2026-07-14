@@ -104,9 +104,9 @@ export function Clients() {
   }
 
   return (
-    <section className="py-16 relative" style={{ background: '#0A1226' }}>
+    <section className="py-16 relative" style={{ background: '#ffffff' }}>
       {/* Separator */}
-      <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'rgba(255,255,255,.06)' }} />
+      <div className="absolute top-0 left-0 right-0 h-px" style={{ background: '#E2E8F0' }} />
 
       <div className="container mx-auto px-4">
         <motion.div
@@ -116,7 +116,7 @@ export function Clients() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <p style={{ fontSize: '.8125rem', color: '#8A97B8', letterSpacing: '.1em', textTransform: 'uppercase' }}>
+          <p style={{ fontSize: '.8125rem', color: '#94A3B8', letterSpacing: '.1em', textTransform: 'uppercase' }}>
             Trusted by
           </p>
         </motion.div>
@@ -146,11 +146,12 @@ export function Clients() {
                     style={{
                       maxHeight: '36px',
                       maxWidth: '160px',
-                      filter: 'grayscale(1) brightness(1.8) opacity(0.55)',
+                      filter: 'grayscale(1) opacity(0.5)',
+                      transition: 'filter .2s',
                     }}
                     title={client.name}
-                    onMouseEnter={e => ((e.currentTarget as HTMLImageElement).style.filter = 'grayscale(1) brightness(2.4) opacity(0.85)')}
-                    onMouseLeave={e => ((e.currentTarget as HTMLImageElement).style.filter = 'grayscale(1) brightness(1.8) opacity(0.55)')}
+                    onMouseEnter={e => ((e.currentTarget as HTMLImageElement).style.filter = 'grayscale(0) opacity(1)')}
+                    onMouseLeave={e => ((e.currentTarget as HTMLImageElement).style.filter = 'grayscale(1) opacity(0.5)')}
                   />
                 </motion.div>
               ))}
@@ -167,12 +168,12 @@ export function Clients() {
                       style={{
                         maxHeight: '36px',
                         maxWidth: '140px',
-                        filter: 'grayscale(1) brightness(1.8) opacity(0.55)',
+                        filter: 'grayscale(1) opacity(0.5)',
                         transition: 'filter .2s',
                       }}
                       title={client.name}
-                      onMouseEnter={e => ((e.currentTarget as HTMLImageElement).style.filter = 'grayscale(1) brightness(2.4) opacity(0.85)')}
-                      onMouseLeave={e => ((e.currentTarget as HTMLImageElement).style.filter = 'grayscale(1) brightness(1.8) opacity(0.55)')}
+                      onMouseEnter={e => ((e.currentTarget as HTMLImageElement).style.filter = 'grayscale(0) opacity(1)')}
+                      onMouseLeave={e => ((e.currentTarget as HTMLImageElement).style.filter = 'grayscale(1) opacity(0.5)')}
                     />
                   </div>
                 </div>
