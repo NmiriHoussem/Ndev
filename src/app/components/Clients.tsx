@@ -22,16 +22,13 @@ export function Clients() {
         const response = await fetch(`${API_BASE}/clients`, {
           headers: { 'Authorization': `Bearer ${publicAnonKey}` },
         });
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        if (data.success && data.clients && data.clients.length > 0) {
+        if (data.success && data.clients?.length > 0) {
           setClients(data.clients);
-        } else {
-          setClients([]);
         }
       } catch (error) {
         console.error('Error fetching clients:', error);
-        setClients([]);
       } finally {
         setLoading(false);
       }
@@ -41,46 +38,55 @@ export function Clients() {
 
   if (loading || clients.length === 0) return null;
 
+  // Duplicate enough times so the loop is seamless at any viewport width
+  const repeated = [...clients, ...clients, ...clients, ...clients];
+
   return (
     <section className="py-14 relative overflow-hidden" style={{ background: '#0A1226' }}>
-      {/* top/bottom separators */}
       <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'rgba(255,255,255,.07)' }} />
       <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: 'rgba(255,255,255,.07)' }} />
 
-      <div className="container mx-auto px-4">
-        {/* Label */}
-        <motion.p
-          className="text-center mb-8"
-          style={{ fontSize: '.75rem', color: '#5A6689', letterSpacing: '.14em', textTransform: 'uppercase' }}
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          Trusted by
-        </motion.p>
+      {/* Fade edges */}
+      <div className="absolute left-0 top-0 bottom-0 z-10 w-24 pointer-events-none" style={{
+        background: 'linear-gradient(90deg, #0A1226, transparent)',
+      }} />
+      <div className="absolute right-0 top-0 bottom-0 z-10 w-24 pointer-events-none" style={{
+        background: 'linear-gradient(270deg, #0A1226, transparent)',
+      }} />
 
-        {/* Client names */}
-        <motion.div
-          className="flex flex-wrap justify-center items-center gap-x-10 gap-y-5 md:gap-x-14"
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
+      {/* Label */}
+      <motion.p
+        className="text-center mb-7"
+        style={{ fontSize: '.75rem', color: '#5A6689', letterSpacing: '.14em', textTransform: 'uppercase' }}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
+        Trusted by
+      </motion.p>
+
+      {/* Marquee track */}
+      <div className="overflow-hidden">
+        <div
+          style={{
+            display: 'flex',
+            width: 'max-content',
+            animation: 'nd-marquee 30s linear infinite',
+          }}
         >
-          {clients.map((client, idx) => (
-            <motion.span
-              key={client.id}
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: idx * 0.07 }}
+          {repeated.map((client, idx) => (
+            <span
+              key={`${client.id}-${idx}`}
               style={{
+                display: 'inline-block',
+                padding: '0 40px',
                 fontSize: '.8125rem',
                 fontWeight: 700,
-                letterSpacing: '.12em',
+                letterSpacing: '.14em',
                 textTransform: 'uppercase',
                 color: '#5A6689',
+                whiteSpace: 'nowrap',
                 transition: 'color .2s',
                 cursor: 'default',
                 userSelect: 'none',
@@ -89,10 +95,17 @@ export function Clients() {
               onMouseLeave={e => (e.currentTarget.style.color = '#5A6689')}
             >
               {client.name}
-            </motion.span>
+            </span>
           ))}
-        </motion.div>
+        </div>
       </div>
+
+      <style>{`
+        @keyframes nd-marquee {
+          from { transform: translateX(0); }
+          to   { transform: translateX(-50%); }
+        }
+      `}</style>
     </section>
   );
 }
