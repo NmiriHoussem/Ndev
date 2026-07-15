@@ -277,7 +277,7 @@ export function Contact() {
 
               {success && (
                 <div className="flex items-center gap-2 text-sm" style={{ color: '#10B981' }}>
-                  <CheckCircle size={15} /> Message sent — we'll be in touch soon.
+                  <CheckCircle size={15} /> Message sent. We'll be in touch soon.
                 </div>
               )}
               {error && (

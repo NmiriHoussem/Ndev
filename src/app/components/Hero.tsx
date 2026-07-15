@@ -174,7 +174,7 @@ export function Hero() {
             }}>
               <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: '#2D6BFF' }} />
               <span style={{ fontSize: '.8125rem', color: '#6E9BFF', letterSpacing: '.04em' }}>
-                Product Design Studio — Tunis · Europe
+                Product Design Studio, Tunis · Europe
               </span>
             </div>
 
@@ -197,7 +197,7 @@ export function Hero() {
               color: '#8A97B8',
               maxWidth: '460px',
             }}>
-              Banks, fast-growing platforms and institutions rely on us to turn complex products into experiences users adopt — from UX audit to design system to launch.
+              Banks, fast-growing platforms and institutions rely on us to turn complex products into experiences users adopt, from UX audit to design system to launch.
             </p>
 
             <div className="flex flex-wrap gap-4 mb-14">

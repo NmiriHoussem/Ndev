@@ -73,7 +73,7 @@ export function AuditFlash() {
               }}
             >
               In 5 days, we analyse your product, benchmark it against your sector, and deliver a
-              prioritized report of quick wins and structural fixes — presented in a 1-hour session
+              prioritized report of quick wins and structural fixes, presented in a 1-hour session
               with your team.
             </p>
 

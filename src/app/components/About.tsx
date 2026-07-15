@@ -65,7 +65,7 @@ export function About() {
               </h2>
 
               <p style={{ fontSize: '1.0625rem', color: '#64748B', lineHeight: 1.75 }}>
-                We have deep expertise in regulated, complex digital products — the kind where UX
+                We have deep expertise in regulated, complex digital products, the kind where UX
                 mistakes have real consequences.
               </p>
             </motion.div>

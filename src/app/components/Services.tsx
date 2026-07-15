@@ -8,7 +8,7 @@ const services = [
     title: 'UX Design',
     category: 'Design',
     description:
-      'User-centred design for complex digital platforms — from UX audit and research through to high-fidelity prototypes ready for development.',
+      'User-centred design for complex digital platforms, from UX audit and research through to high-fidelity prototypes ready for development.',
     tags: ['UX Research & Audit', 'Wireframing', 'Interaction Design', 'Prototyping'],
   },
   {
@@ -24,7 +24,7 @@ const services = [
     title: 'Web Development',
     category: 'Development',
     description:
-      'Custom web applications built with modern frameworks — fully responsive, accessible, and optimised for production.',
+      'Custom web applications built with modern frameworks: fully responsive, accessible, and optimised for production.',
     tags: ['React · Next.js', 'API Integration', 'Performance', 'Accessibility'],
   },
   {
@@ -32,7 +32,7 @@ const services = [
     title: 'SaaS Products',
     category: 'Development',
     description:
-      'End-to-end SaaS development — from architecture and authentication to launch, analytics, and iterative improvement.',
+      'End-to-end SaaS development, from architecture and authentication to launch, analytics, and iterative improvement.',
     tags: ['Cloud Infrastructure', 'Auth & Billing', 'Analytics', 'Monitoring'],
   },
   {
@@ -225,7 +225,7 @@ export function Services() {
             fontSize: '1.0625rem', color: '#64748B', lineHeight: 1.75,
             maxWidth: '400px',
           }}>
-            From first audit to shipped product — the full design and build cycle for complex digital platforms.
+            From first audit to shipped product. The full design and build cycle for complex digital platforms.
           </p>
         </motion.div>
 

@@ -20,14 +20,14 @@ const steps = [
     title: 'Design & System',
     duration: '4–8 weeks',
     description:
-      'Full design cycle — from wireframes to production-ready components and a documented design system your team owns and can scale.',
+      'Full design cycle, from wireframes to production-ready components and a documented design system your team owns and can scale.',
   },
   {
     number: '04',
     title: 'Delivery & Handoff',
     duration: 'Until live',
     description:
-      'We work alongside your developers until the product ships. No dropped handoffs — we stay until it is live and validated.',
+      'We work alongside your developers until the product ships. No dropped handoffs. We stay until it is live and validated.',
   },
 ];
 
@@ -68,7 +68,7 @@ export function Process() {
             A clear engagement,<br />start to finish.
           </h2>
           <p style={{ fontSize: '1.0625rem', color: '#8A97B8', lineHeight: 1.75 }}>
-            Every project follows the same rigorous process — so you always know where you stand and what comes next.
+            Every project follows the same rigorous process, so you always know where you stand and what comes next.
           </p>
         </motion.div>
 
@@ -133,7 +133,7 @@ export function Process() {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          Every engagement starts with the UX Audit — no commitment required beyond that.
+          Every engagement starts with the UX Audit. No commitment required beyond that.
         </motion.p>
 
       </div>

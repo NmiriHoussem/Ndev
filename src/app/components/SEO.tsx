@@ -107,7 +107,7 @@ function updateMetaTag(attribute: string, attributeValue: string, content: strin
 // Predefined SEO configurations for different pages
 export const SEOConfigs = {
   home: {
-    title: 'NdevDigital — Product Design & UX Studio for Complex Platforms | Tunis',
+    title: 'NdevDigital - Product Design & UX Studio for Complex Platforms | Tunis',
     description: 'NdevDigital is a product design studio specialising in complex digital platforms for banks, fintechs, and institutions. UX design, design systems, and web development. Tunis · Europe.',
     url: 'https://ndev.digital/',
   },
