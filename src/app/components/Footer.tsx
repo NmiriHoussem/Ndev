@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Linkedin, Heart, ArrowUp, Mail, Phone, MapPin } from 'lucide-react';
+import { Linkedin, ArrowUp, Mail, Phone, MapPin } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { projectId, publicAnonKey } from '../../../utils/supabase/info';
 
@@ -270,9 +270,7 @@ export function Footer() {
         >
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm flex items-center gap-2" style={{ color: '#8A97B8' }}>
-              &copy; {new Date().getFullYear()} NdevDigital. Made with{' '}
-              <Heart className="text-red-500 fill-red-500" size={16} />{' '}
-              for amazing clients
+              &copy; {new Date().getFullYear()} NdevDigital. All rights reserved.
             </p>
 
             <div className="flex items-center gap-6 text-sm" style={{ color: '#8A97B8' }}>
