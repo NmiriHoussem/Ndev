@@ -185,7 +185,9 @@ export function Hero() {
               letterSpacing: '-1.5px',
               color: '#EAF0FF',
             }}>
-              We design complex digital products people{' '}
+              We design{' '}
+              <span style={{ color: '#6E9BFF' }}>complex</span>{' '}
+              products people{' '}
               <span style={{ color: '#6E9BFF' }}>trust.</span>
             </h1>
 
