@@ -136,7 +136,7 @@ export default function App() {
         <Services />
         <Process />
         <About />
-        <Portfolio onViewAll={() => navigateTo('/portfolio')} />
+        {/* <Portfolio onViewAll={() => navigateTo('/portfolio')} /> */}
         <AuditFlash />
         <Contact />
       </main>
