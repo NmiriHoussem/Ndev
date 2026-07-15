@@ -12,7 +12,7 @@ const contactInfo = [
 ];
 
 export function Contact() {
-  const [formData, setFormData] = useState({ name: '', email: '', company: '', message: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', company: '', projectType: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -42,7 +42,7 @@ export function Contact() {
 
       if (response.ok && data.success) {
         setSuccess(true);
-        setFormData({ name: '', email: '', company: '', message: '' });
+        setFormData({ name: '', email: '', company: '', projectType: '', message: '' });
         setShowSuccessModal(true);
       } else {
         setError(true);
@@ -61,7 +61,7 @@ export function Contact() {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -195,6 +195,40 @@ export function Contact() {
                   onFocus={() => setFocusedField('company')}
                   onBlur={() => setFocusedField(null)}
                 />
+              </div>
+
+              <div>
+                <label htmlFor="projectType" style={{ fontSize: '.875rem', fontWeight: 500, color: '#0F172A', display: 'block', marginBottom: '6px' }}>
+                  Project type
+                </label>
+                <select
+                  id="projectType"
+                  name="projectType"
+                  value={formData.projectType}
+                  onChange={handleChange}
+                  style={{
+                    width: '100%',
+                    borderRadius: '6px',
+                    border: `1px solid ${focusedField === 'projectType' ? '#2D6BFF' : '#E2E8F0'}`,
+                    boxShadow: focusedField === 'projectType' ? '0 0 0 3px rgba(45,107,255,.1)' : 'none',
+                    padding: '9px 12px',
+                    fontSize: '.9375rem',
+                    color: formData.projectType ? '#0F172A' : '#94A3B8',
+                    background: '#fff',
+                    outline: 'none',
+                    transition: 'border-color .15s, box-shadow .15s',
+                    appearance: 'auto',
+                  }}
+                  onFocus={() => setFocusedField('projectType')}
+                  onBlur={() => setFocusedField(null)}
+                >
+                  <option value="">Select a project type…</option>
+                  <option value="New product">New product</option>
+                  <option value="Redesign">Redesign</option>
+                  <option value="UX Audit">UX Audit</option>
+                  <option value="Design system">Design system</option>
+                  <option value="Other">Other</option>
+                </select>
               </div>
 
               <div>

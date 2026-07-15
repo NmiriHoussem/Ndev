@@ -270,6 +270,47 @@ export function Hero() {
             </div>
           </motion.div>
 
+          {/* Mobile trust strip — visible below lg where DeviceMockup is hidden */}
+          <motion.div
+            className="lg:hidden"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+          >
+            <div style={{
+              display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '1px', background: 'rgba(255,255,255,.06)',
+              borderRadius: '12px', overflow: 'hidden',
+            }}>
+              {[
+                { value: '20+', label: 'Products shipped' },
+                { value: '3', label: 'Industries' },
+                { value: '4', label: 'Countries' },
+              ].map(stat => (
+                <div key={stat.label} style={{
+                  background: '#0E1830', padding: '20px 16px', textAlign: 'center',
+                }}>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#EAF0FF', marginBottom: '4px' }}>{stat.value}</div>
+                  <div style={{ fontSize: '.75rem', color: '#8A97B8' }}>{stat.label}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Sample vertical status badge */}
+            <div style={{
+              marginTop: '16px',
+              display: 'flex', alignItems: 'center', gap: '10px',
+              background: 'rgba(16,185,129,.05)',
+              border: '1px solid rgba(16,185,129,.15)',
+              borderRadius: '10px', padding: '12px 16px',
+            }}>
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10B981', flexShrink: 0 }} />
+              <span style={{ fontSize: '.8125rem', color: '#8A97B8' }}>
+                Clients in fintech, banking and regulated platforms
+              </span>
+            </div>
+          </motion.div>
+
           {/* Right - Device mockup */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 10 }}

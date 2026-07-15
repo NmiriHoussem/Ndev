@@ -8,6 +8,7 @@ import { PortfolioPage } from './components/PortfolioPage';
 import { Clients } from './components/Clients';
 import { Contact } from './components/Contact';
 import { AuditFlash } from './components/AuditFlash';
+import { Process } from './components/Process';
 import { Footer } from './components/Footer';
 import { Admin } from './admin/Admin';
 import { PrivacyPolicy } from './components/PrivacyPolicy';
@@ -133,6 +134,7 @@ export default function App() {
         <Hero />
         <Clients />
         <Services />
+        <Process />
         <About />
         <Portfolio onViewAll={() => navigateTo('/portfolio')} />
         <AuditFlash />
