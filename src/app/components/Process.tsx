@@ -4,28 +4,24 @@ const steps = [
   {
     number: '01',
     title: 'UX Audit',
-    duration: '5 days',
     description:
       'We map your product against sector benchmarks, identify friction points and compliance gaps. You receive a prioritised action report with quick wins and structural fixes.',
   },
   {
     number: '02',
     title: 'Strategy & Scoping',
-    duration: '1–2 weeks',
     description:
       'We align on goals, define the scope and set measurable success criteria with your team before a single screen is designed.',
   },
   {
     number: '03',
     title: 'Design & System',
-    duration: '4–8 weeks',
     description:
       'Full design cycle, from wireframes to production-ready components and a documented design system your team owns and can scale.',
   },
   {
     number: '04',
     title: 'Delivery & Handoff',
-    duration: 'Until live',
     description:
       'We work alongside your developers until the product ships. No dropped handoffs. We stay until it is live and validated.',
   },
@@ -98,17 +94,6 @@ export function Process() {
                 {idx < steps.length - 1 && (
                   <div className="hidden lg:block flex-1 h-px" style={{ background: 'rgba(45,107,255,.2)' }} />
                 )}
-              </div>
-
-              {/* Duration badge */}
-              <div className="inline-flex items-center gap-1.5 mb-4" style={{
-                background: 'rgba(45,107,255,.1)',
-                border: '1px solid rgba(45,107,255,.2)',
-                borderRadius: '999px',
-                padding: '3px 10px',
-              }}>
-                <div className="w-1 h-1 rounded-full" style={{ background: '#2D6BFF' }} />
-                <span style={{ fontSize: '.75rem', color: '#6E9BFF', fontWeight: 600 }}>{step.duration}</span>
               </div>
 
               <h3 style={{
