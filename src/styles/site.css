@@ -1,0 +1,89 @@
+/* NDev Digital site — page-level basics from the design (link colours per page, heading weight). */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+}
+
+.nd-page a {
+  color: var(--nd-link, inherit);
+}
+
+.nd-page a:hover {
+  color: var(--nd-link-hover, inherit);
+}
+
+.nd-page h1,
+.nd-page h2 {
+  font-weight: 500;
+}
+
+.nd-page h3 {
+  font-weight: 600;
+}
+
+/* Home hero scene: drop the generated image at public/hero-scene.webp */
+.nd-hero-scene {
+  background-image: linear-gradient(90deg, rgba(237, 229, 216, 0.92) 0%, rgba(237, 229, 216, 0.75) 38%, rgba(237, 229, 216, 0) 62%), url('/hero-scene.webp');
+}
+
+@media (max-width: 860px) {
+  .nd-hero-scene {
+    background-image: linear-gradient(180deg, rgba(237, 229, 216, 0.9), rgba(237, 229, 216, 0.82)), url('/hero-scene.webp');
+  }
+}
+
+.nd-page button:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+/* Mobile navigation */
+@media (max-width: 1000px) {
+  .nd-nav .nd-nav-links,
+  .nd-nav .nd-nav-cta {
+    display: none !important;
+  }
+  .nd-nav .nd-nav-toggle {
+    display: inline-flex !important;
+  }
+  .nd-nav.nd-nav-open .nd-nav-links {
+    display: flex !important;
+    flex-direction: column;
+    align-items: stretch !important;
+    width: 100%;
+    order: 3;
+  }
+  .nd-nav.nd-nav-open .nd-nav-cta {
+    display: inline-flex !important;
+    order: 4;
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+/* Clickable work cards */
+.nd-card .nd-thumb{transition:transform .2s ease,box-shadow .2s ease}
+.nd-card[href]:hover .nd-thumb,.nd-card[href]:focus-visible .nd-thumb{transform:translateY(-4px);box-shadow:0 14px 30px rgba(27,31,42,.12)}
+.nd-card .nd-card-title{transition:color .2s ease}
+.nd-card[href] .nd-card-title::after{content:' \2192';display:inline-block;opacity:0;transform:translateX(-4px);transition:opacity .2s ease,transform .2s ease}
+.nd-card[href]:hover .nd-card-title,.nd-card[href]:focus-visible .nd-card-title{color:#B45309}
+.nd-card[href]:hover .nd-card-title::after,.nd-card[href]:focus-visible .nd-card-title::after{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.nd-card .nd-thumb,.nd-card .nd-card-title::after{transition:none}
+}
+
+/* Academy hero image (public/academy-scene.webp) */
+.nd-academy-scene {
+  background-image: linear-gradient(90deg, rgba(244, 239, 230, 0.95) 0%, rgba(244, 239, 230, 0.8) 40%, rgba(244, 239, 230, 0) 65%), url('/academy-scene.webp');
+}
+@media (max-width: 860px) {
+  .nd-academy-scene {
+    background-image: linear-gradient(180deg, rgba(244, 239, 230, 0.92), rgba(244, 239, 230, 0.85)), url('/academy-scene.webp');
+  }
+}
+
+@media (max-width: 640px) {
+  .nd-hide-sm { display: none; }
+}

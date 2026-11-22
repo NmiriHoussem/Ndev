@@ -1,84 +1,153 @@
 import { useEffect, useState } from 'react';
-import { Header } from './components/Header';
-import { Hero } from './components/Hero';
-import { Services } from './components/Services';
-import { About } from './components/About';
-import { Portfolio } from './components/Portfolio';
-import { PortfolioPage } from './components/PortfolioPage';
-import { Clients } from './components/Clients';
-import { Contact } from './components/Contact';
-import { AuditFlash } from './components/AuditFlash';
-import { Process } from './components/Process';
-import { Footer } from './components/Footer';
 import { Admin } from './admin/Admin';
 import { PrivacyPolicy } from './components/PrivacyPolicy';
 import { TermsOfService } from './components/TermsOfService';
 import { SEO, SEOConfigs } from './components/SEO';
 import { DynamicFavicons } from './components/DynamicFavicons';
-import { ProjectDetail } from './components/ProjectDetail';
+import { HomePage } from './site/pages/HomePage';
+import { ConsultingPage } from './site/pages/ConsultingPage';
+import { DeliveryPage } from './site/pages/DeliveryPage';
+import { AugmentationPage } from './site/pages/AugmentationPage';
+import { WorkPage } from './site/pages/WorkPage';
+import { CaseStudyPage } from './site/pages/CaseStudyPage';
+import { CaseStudyIziPage } from './site/pages/CaseStudyIziPage';
+import { CaseStudyExcelliaPage } from './site/pages/CaseStudyExcelliaPage';
+import { CaseStudyEndataoPage } from './site/pages/CaseStudyEndataoPage';
+import { CaseStudyVenariPage } from './site/pages/CaseStudyVenariPage';
+import { CaseStudyGazelecPage } from './site/pages/CaseStudyGazelecPage';
+import { CaseStudyScheidtPage } from './site/pages/CaseStudyScheidtPage';
+import { CaseStudyDatascientistPage } from './site/pages/CaseStudyDatascientistPage';
+import { AboutPage } from './site/pages/AboutPage';
+import { FlashAuditPage } from './site/pages/FlashAuditPage';
+import { ContactPage } from './site/pages/ContactPage';
+import { AcademyPage } from './site/pages/AcademyPage';
+import { TrainingPage } from './site/pages/TrainingPage';
+import { findTraining } from './site/trainings';
+
+const BASE = 'https://ndev.digital';
+
+type Route = { element: JSX.Element; title: string; description: string; path: string };
+
+function normalise(path: string) {
+  if (path.length > 1 && path.endsWith('/')) return path.slice(0, -1);
+  return path || '/';
+}
+
+function resolve(rawPath: string): Route | null {
+  const path = normalise(rawPath);
+  const r = (element: JSX.Element, title: string, description: string): Route => ({ element, title, description, path });
+
+  switch (path) {
+    case '/':
+      return r(<HomePage />, 'NDev Digital | Product studio: product vision, UX and delivery',
+        'NDev Digital shapes, designs and builds products people adopt. Product consulting, product delivery (web, SaaS, mobile) and team augmentation, with product vision and UX at the core. Tunis · Europe.');
+    case '/consulting':
+      return r(<ConsultingPage />, 'Product Consulting | NDev Digital',
+        'Product vision, discovery, UX research and audit, roadmap, process improvement, AI adoption and transformation coaching.');
+    case '/delivery':
+      return r(<DeliveryPage />, 'Product Delivery | NDev Digital',
+        'We design and build web platforms, SaaS products and mobile apps end to end, always starting from product vision and UX.');
+    case '/team-augmentation':
+      return r(<AugmentationPage />, 'Team Augmentation | NDev Digital',
+        'Senior product managers, product designers, UX researchers and developers embedded in your teams, with the NDev method behind them.');
+    case '/work':
+    case '/portfolio':
+      return r(<WorkPage />, 'Work | NDev Digital',
+        'Products and engagements for banks, fintechs, platforms and media: Zitouna Bank, IZI by Zitouna Payment, Scheidt & Bachmann Group, Excellia Solutions and more.');
+    case '/work/zitouna-bank-kyc':
+      return r(<CaseStudyPage />, 'Zitouna Bank: digital KYC onboarding | NDev Digital',
+        'How NDev Digital helped Zitouna Bank digitise its KYC onboarding: audit, discovery, journey design, UX/UI and design system.');
+    case '/work/venari-security':
+      return r(<CaseStudyVenariPage />, 'Venari Security: UX/UI for security platforms | NDev Digital',
+        'A dedicated NDev UX/UI expert on Venari Security’s platforms: UX research with the team, business alignment, UX/UI, design system and design through delivery.');
+    case '/work/gaz-elec-moins-cher':
+      return r(<CaseStudyGazelecPage />, 'Gaz Elec Moins Cher: business energy contracts platform | NDev Digital',
+        'How NDev Digital designed the Gaz Elec Moins Cher platform for French businesses: UX research, business alignment, UX/UI, design system and design through delivery.');
+    case '/work/scheidt-bachmann':
+      return r(<CaseStudyScheidtPage />, 'Scheidt & Bachmann: training and coaching a platform redesign | NDev Digital',
+        'NDev Digital trained and coached the Scrum Master, lead developer and design team of Scheidt & Bachmann Group to redesign their platform and its design system.');
+    case '/work/datascientist-fr':
+      return r(<CaseStudyDatascientistPage />, 'Datascientist.fr: UX/UI for a data science e-learning platform | NDev Digital',
+        'UX/UI design for Datascientist.fr, a new e-learning platform specialised in data science: UX research, business alignment, UX/UI, design system and design through delivery.');
+    case '/work/endatao-wallet':
+      return r(<CaseStudyEndataoPage />, 'Endatao: mobile wallet app designed from scratch | NDev Digital',
+        'A dedicated NDev UX/UI expert designed the Endatao wallet app from scratch: UX research with the team, business alignment, UX/UI, design system and design through delivery.');
+    case '/work/excellia-solutions':
+      return r(<CaseStudyExcelliaPage />, 'Excellia Solutions: UX/UI for trading and fintech products | NDev Digital',
+        'A dedicated NDev UX/UI expert on Excellia Solutions’ trading and fintech products: UX research, business alignment, UX workshops, UI design and design system.');
+    case '/work/zitouna-payment-izi':
+      return r(<CaseStudyIziPage />, 'Zitouna Payment IZI: payment web portal | NDev Digital',
+        'How NDev Digital shaped IZI, Zitouna Payment’s payment web portal: UX research, business alignment, UX workshops, UI design and design system.');
+    case '/about':
+      return r(<AboutPage />, 'About | NDev Digital',
+        'NDev Digital is a product studio based in Tunis bringing product management, UX and engineering together in one team.');
+    case '/flash-audit':
+      return r(<FlashAuditPage />, 'Product & UX Flash Audit | NDev Digital',
+        'In 5 days, a prioritised plan of quick wins and structural fixes for your product and UX, presented live to your team. Fixed price.');
+    case '/contact':
+      return r(<ContactPage />, 'Contact | NDev Digital',
+        'Tell us about your product. Email contact@ndev.digital or call +216 54 882 779. We reply within one business day.');
+    case '/academy':
+      return r(<AcademyPage />, 'Sprint Academy | Product, Scrum, UX, QA, cybersecurity and AI trainings',
+        'NDev Sprint Academy trains teams and professionals in product management, product ownership, Scrum, UX in Scrum teams, QA, cybersecurity and AI engineering.');
+  }
+
+  if (path.startsWith('/academy/')) {
+    const slug = path.slice('/academy/'.length);
+    const t = findTraining(slug);
+    if (t) return r(<TrainingPage slug={slug} />, `${t.title} training | Sprint Academy`, t.desc);
+  }
+  if (path.startsWith('/project/') || path.startsWith('/projects/')) {
+    return r(<WorkPage />, 'Work | NDev Digital', 'Products and engagements by NDev Digital.');
+  }
+  return null;
+}
 
 export default function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
 
   useEffect(() => {
-    // Handle browser back/forward buttons
-    const handlePopState = () => {
-      setCurrentPath(window.location.pathname);
-    };
+    const onPop = () => setCurrentPath(window.location.pathname);
+    window.addEventListener('popstate', onPop);
 
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    // Client-side navigation for internal links
+    const onClick = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = (e.target as HTMLElement).closest('a');
+      if (!a) return;
+      const href = a.getAttribute('href');
+      if (!href || !href.startsWith('/') || href.startsWith('//') || a.target || a.hasAttribute('download')) return;
+      e.preventDefault();
+      const url = new URL(href, window.location.origin);
+      if (url.pathname + url.hash === window.location.pathname + window.location.hash) return;
+      window.history.pushState({}, '', url.pathname + url.hash);
+      setCurrentPath(url.pathname);
+      if (!url.hash) window.scrollTo(0, 0);
+    };
+    document.addEventListener('click', onClick);
+
+    return () => {
+      window.removeEventListener('popstate', onPop);
+      document.removeEventListener('click', onClick);
+    };
   }, []);
 
-  // Handle hash navigation on home page
+  // Scroll to hash target after navigation
   useEffect(() => {
-    if (currentPath === '/' || currentPath === '') {
-      const hash = window.location.hash;
-      if (hash) {
-        // Wait for page to render, then scroll to section
-        setTimeout(() => {
-          const id = hash.replace('#', '');
-          const element = document.getElementById(id);
-          if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
-          }
-        }, 100);
-      }
-    }
+    const hash = window.location.hash;
+    if (!hash) return;
+    const t = setTimeout(() => {
+      const el = document.getElementById(hash.slice(1));
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }, 80);
+    return () => clearTimeout(t);
   }, [currentPath]);
 
-  // Navigation helper
-  const navigateTo = (path: string) => {
-    window.history.pushState({}, '', path);
-    setCurrentPath(path);
-  };
+  const p = normalise(currentPath);
 
-  // Check routes - SEO-friendly URLs with multiple variations
-  const isAdminRoute = currentPath === '/admin' || currentPath === '/admin/';
-  
-  // Privacy Policy - support multiple SEO-friendly variations
-  const isPrivacyRoute = 
-    currentPath === '/privacy-policy' || currentPath === '/privacy-policy/' ||
-    currentPath === '/privacy' || currentPath === '/privacy/';
-  
-  // Terms of Service - support multiple SEO-friendly variations
-  const isTermsRoute = 
-    currentPath === '/terms-of-service' || currentPath === '/terms-of-service/' ||
-    currentPath === '/terms-of-services' || currentPath === '/terms-of-services/' ||
-    currentPath === '/terms' || currentPath === '/terms/';
+  if (p === '/admin') return <Admin />;
 
-  // Portfolio page route - /portfolio
-  const isPortfolioRoute = currentPath === '/portfolio' || currentPath === '/portfolio/';
-
-  // Project detail route - matches /project/:id or /projects/:id
-  const projectMatch = currentPath.match(/^\/(project|projects)\/([^\\/]+)\/?$/);
-  const projectId = projectMatch ? projectMatch[2] : null;
-
-  if (isAdminRoute) {
-    return <Admin />;
-  }
-
-  if (isPrivacyRoute) {
+  if (p === '/privacy-policy' || p === '/privacy') {
     return (
       <>
         <SEO {...SEOConfigs.privacy} />
@@ -87,7 +156,7 @@ export default function App() {
     );
   }
 
-  if (isTermsRoute) {
+  if (p === '/terms-of-service' || p === '/terms-of-services' || p === '/terms') {
     return (
       <>
         <SEO {...SEOConfigs.terms} />
@@ -96,51 +165,13 @@ export default function App() {
     );
   }
 
-  if (isPortfolioRoute) {
-    return (
-      <>
-        <SEO 
-          title="Portfolio - NdevDigital | Our Projects & Case Studies"
-          description="Explore our portfolio of successful projects including web development, mobile apps, UI/UX design, and SaaS products."
-        />
-        <DynamicFavicons />
-        <PortfolioPage />
-      </>
-    );
-  }
-
-  if (projectId) {
-    return (
-      <>
-        <SEO 
-          title={`Project Details - NdevDigital`}
-          description="Explore our project case study and learn about our development process, challenges, and solutions."
-        />
-        <DynamicFavicons />
-        <ProjectDetail 
-          projectId={projectId}
-          onBack={() => navigateTo('/portfolio')}
-        />
-      </>
-    );
-  }
+  const route = resolve(p) ?? resolve('/')!;
 
   return (
-    <div className="min-h-screen">
-      <SEO {...SEOConfigs.home} />
+    <>
+      <SEO title={route.title} description={route.description} url={BASE + (route.path === '/' ? '/' : route.path)} />
       <DynamicFavicons />
-      <Header />
-      <main>
-        <Hero />
-        <Clients />
-        <Services />
-        <Process />
-        <About />
-        {/* <Portfolio onViewAll={() => navigateTo('/portfolio')} /> */}
-        <AuditFlash />
-        <Contact />
-      </main>
-      <Footer />
-    </div>
+      {route.element}
+    </>
   );
 }

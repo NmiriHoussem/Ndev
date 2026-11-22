@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+.env
+.env.local
+run-local.bat
+_to_delete/
+.stage*/
+public/*-scene.png
+package-lock.json
