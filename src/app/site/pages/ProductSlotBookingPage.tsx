@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import { Footer } from '../Footer';
 import { Nav } from '../Nav';
 import productSlotBooking from '../../../assets/products/slot-booking-v2.webp';
+import { useContactForm, FormStatus } from '../contactForm';
 
 export function ProductSlotBookingPage() {
-
+  const form = useContactForm({ name: '', email: '', url: '', books: '' }, (v) => ({
+    name: v.name, email: v.email, company: v.url || '', projectType: 'Product: NDev Slot Booking',
+    message: `Early access request for NDev Slot Booking. Website: ${v.url || '(not provided)'}. People will book: ${v.books || '(not provided)'}`,
+  }));
   return (
 <div className="nd-page" style={{ "--nd-link": "#B45309", "--nd-link-hover": "#92400E", fontFamily: "Inter, system-ui, sans-serif", color: "#0F172A", background: "#FFFFFF", width: "100%" }}>
 
@@ -25,7 +29,7 @@ export function ProductSlotBookingPage() {
 <p style={{ fontSize: "17px", lineHeight: "1.7", color: "#4A5160", margin: "0 0 16px" }}>Let your visitors book a time slot on your WordPress site: a meeting room, a coworking desk, a studio, a piece of equipment, a session with you. They pick an offer, a date and a time, add extras if they need them, and send a request you confirm.</p>
 <p style={{ fontSize: "17px", lineHeight: "1.7", color: "#4A5160", margin: "0 0 32px" }}>No account to create, no monthly fee to a booking platform. The bookings stay in your WordPress.</p>
 <div style={{ display: "flex", flexWrap: "wrap", gap: "12px", alignItems: "center" }}>
-<a href="/contact" style={{ display: "inline-flex", alignItems: "center", background: "#F59E0B", color: "#1B1F2A", textDecoration: "none", fontWeight: "600", fontSize: "16px", padding: "0 28px", minHeight: "52px", borderRadius: "10px" }}>Request early access</a>
+<a href="#early-access" style={{ display: "inline-flex", alignItems: "center", background: "#F59E0B", color: "#1B1F2A", textDecoration: "none", fontWeight: "600", fontSize: "16px", padding: "0 28px", minHeight: "52px", borderRadius: "10px" }}>Request early access</a>
 <span style={{ fontSize: "14px", color: "#6B7180" }}>WordPress 6.0+ · PHP 7.4+</span>
 </div>
 </div>
@@ -68,13 +72,20 @@ export function ProductSlotBookingPage() {
 </section>
 
 
-<section style={{ padding: "104px 24px" }}>
-<div style={{ maxWidth: "1200px", margin: "0 auto", background: "#EDE5D8", borderRadius: "20px", padding: "56px", display: "flex", flexWrap: "wrap", gap: "32px", alignItems: "center", justifyContent: "space-between" }}>
-<div style={{ flex: "1 1 520px", minWidth: "0" }}>
-<h2 style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: "500", fontSize: "clamp(20px, 2.36vw, 34px)", lineHeight: "1.15", color: "#1B1F2A", margin: "0 0 12px" }}>Need a tool that does not exist yet?</h2>
-<p style={{ fontSize: "16px", lineHeight: "1.7", color: "#4A5160", margin: "0", maxWidth: "560px" }}>We design and build custom plugins, internal tools and web apps around the way your team already works.</p>
+<section id="early-access" style={{ padding: "104px 24px", scrollMarginTop: "80px" }}>
+<div style={{ maxWidth: "1200px", margin: "0 auto", background: "#EDE5D8", borderRadius: "20px", padding: "56px", display: "flex", flexWrap: "wrap", gap: "48px" }}>
+<div style={{ flex: "1 1 380px", minWidth: "0" }}>
+<h2 style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: "500", fontSize: "clamp(21px, 2.5vw, 36px)", lineHeight: "1.15", color: "#1B1F2A", margin: "0 0 14px" }}>Request early access</h2>
+<p style={{ fontSize: "16px", lineHeight: "1.7", color: "#4A5160", margin: "0" }}>Tell us what people will book on your site. We send you the plugin and help you set it up.</p>
 </div>
-<a href="/delivery" style={{ display: "inline-flex", alignItems: "center", background: "#1B1F2A", color: "#FFFFFF", textDecoration: "none", fontWeight: "600", fontSize: "15px", padding: "0 26px", minHeight: "50px", borderRadius: "10px" }}>See Delivery</a>
+<form onSubmit={form.submit} style={{ flex: "1 1 480px", minWidth: "0", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px" }}>
+<label style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "13px", color: "#4A5160" }}>Full name<input type="text" name="name" required value={form.values.name} onChange={form.change} style={{ fontFamily: "inherit", fontSize: "15px", minHeight: "46px", padding: "0 14px", borderRadius: "8px", border: "1px solid #D6CEC2", background: "#FFFFFF", color: "#1B1F2A" }} /></label>
+<label style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "13px", color: "#4A5160" }}>Email<input type="email" name="email" required value={form.values.email} onChange={form.change} style={{ fontFamily: "inherit", fontSize: "15px", minHeight: "46px", padding: "0 14px", borderRadius: "8px", border: "1px solid #D6CEC2", background: "#FFFFFF", color: "#1B1F2A" }} /></label>
+<label style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "13px", color: "#4A5160", gridColumn: "1 / -1" }}>Your website<input type="url" name="url" placeholder="https://" value={form.values.url} onChange={form.change} style={{ fontFamily: "inherit", fontSize: "15px", minHeight: "46px", padding: "0 14px", borderRadius: "8px", border: "1px solid #D6CEC2", background: "#FFFFFF", color: "#1B1F2A" }} /></label>
+<label style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "13px", color: "#4A5160", gridColumn: "1 / -1" }}>What will people book?<input type="text" name="books" value={form.values.books} onChange={form.change} placeholder="Meeting rooms, coworking desks, a studio" style={{ fontFamily: "inherit", fontSize: "15px", minHeight: "46px", padding: "0 14px", borderRadius: "8px", border: "1px solid #D6CEC2", background: "#FFFFFF", color: "#1B1F2A" }} /></label>
+<button type="submit" disabled={form.sending} style={{ gridColumn: "1 / -1", fontFamily: "inherit", fontSize: "15px", fontWeight: "600", minHeight: "50px", border: "none", borderRadius: "10px", background: "#F59E0B", color: "#1B1F2A", cursor: "pointer" }}>{form.sending ? 'Sending\u2026' : 'Request early access'}</button>
+<FormStatus status={form.status} />
+</form>
 </div>
 </section>
 
