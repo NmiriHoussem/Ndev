@@ -11,6 +11,7 @@ export function Nav({ active }: { active?: string }) {
     { id: 'augmentation', label: 'Team Augmentation', href: '/team-augmentation' },
     { id: 'work', label: 'Work', href: '/work' },
     { id: 'academy', label: 'Academy', href: '/academy' },
+    { id: 'products', label: 'Products', href: '/products' },
     { id: 'about', label: 'About', href: '/about' },
     { id: 'contact', label: 'Contact', href: '/contact' },
   ];

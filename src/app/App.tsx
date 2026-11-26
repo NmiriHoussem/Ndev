@@ -21,6 +21,8 @@ import { AboutPage } from './site/pages/AboutPage';
 import { FlashAuditPage } from './site/pages/FlashAuditPage';
 import { ContactPage } from './site/pages/ContactPage';
 import { AcademyPage } from './site/pages/AcademyPage';
+import { ProductsPage } from './site/pages/ProductsPage';
+import { ProductSlotBookingPage } from './site/pages/ProductSlotBookingPage';
 import { TrainingPage } from './site/pages/TrainingPage';
 import { findTraining } from './site/trainings';
 
@@ -87,6 +89,12 @@ function resolve(rawPath: string): Route | null {
     case '/contact':
       return r(<ContactPage />, 'Contact | NDev Digital',
         'Tell us about your product. Email contact@ndev.digital or call +216 54 882 779. We reply within one business day.');
+    case '/products':
+      return r(<ProductsPage />, 'Products | NDev Digital',
+        'Creative AI-augmented apps and useful tools designed and built by NDev Digital, including NDev Slot Booking.');
+    case '/products/slot-booking':
+      return r(<ProductSlotBookingPage />, 'NDev Slot Booking: time-slot booking for WordPress | NDev Digital',
+        'Let visitors book a coworking desk, a meeting room, a studio or equipment on your WordPress site. Offers, extras, approval and calendar sync.');
     case '/academy':
       return r(<AcademyPage />, 'Sprint Academy | Product, Scrum, UX, QA, cybersecurity and AI trainings',
         'NDev Sprint Academy trains teams and professionals in product management, product ownership, Scrum, UX in Scrum teams, QA, cybersecurity and AI engineering.');
