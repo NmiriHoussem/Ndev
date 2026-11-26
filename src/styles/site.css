@@ -87,3 +87,7 @@ body {
 @media (max-width: 640px) {
   .nd-hide-sm { display: none; }
 }
+
+@media (max-width: 900px) {
+  .nd-docs-toc { position: static !important; flex: 1 1 100% !important; }
+}

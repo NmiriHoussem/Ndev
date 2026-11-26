@@ -23,6 +23,8 @@ import { ContactPage } from './site/pages/ContactPage';
 import { AcademyPage } from './site/pages/AcademyPage';
 import { ProductsPage } from './site/pages/ProductsPage';
 import { ProductSlotBookingPage } from './site/pages/ProductSlotBookingPage';
+import { ProductSlotBookingDocsPage } from './site/pages/ProductSlotBookingDocsPage';
+import { ProductSlotBookingSupportPage } from './site/pages/ProductSlotBookingSupportPage';
 import { TrainingPage } from './site/pages/TrainingPage';
 import { findTraining } from './site/trainings';
 
@@ -92,6 +94,12 @@ function resolve(rawPath: string): Route | null {
     case '/products':
       return r(<ProductsPage />, 'Products | NDev Digital',
         'Creative AI-augmented apps and useful tools designed and built by NDev Digital, including NDev Slot Booking.');
+    case '/products/slot-booking/docs':
+      return r(<ProductSlotBookingDocsPage />, 'NDev Slot Booking documentation | NDev Digital',
+        'Install and configure NDev Slot Booking: opening hours, offers, extras, wording, placing the form, managing bookings, calendar sync and emails.');
+    case '/products/slot-booking/support':
+      return r(<ProductSlotBookingSupportPage />, 'NDev Slot Booking support | NDev Digital',
+        'Get help with NDev Slot Booking: what support covers, response times and a form to open a support request.');
     case '/products/slot-booking':
       return r(<ProductSlotBookingPage />, 'NDev Slot Booking: time-slot booking for WordPress | NDev Digital',
         'Let visitors book a coworking desk, a meeting room, a studio or equipment on your WordPress site. Offers, extras, approval and calendar sync.');

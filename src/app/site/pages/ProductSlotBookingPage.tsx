@@ -14,7 +14,12 @@ export function ProductSlotBookingPage() {
 
 <Nav active="products" />
 
-<div style={{ background: "#F4EFE6", padding: "20px 24px" }}><div style={{ maxWidth: "1200px", margin: "0 auto", fontSize: "14px" }}><a href="/products" style={{ color: "#4A5160", textDecoration: "none" }}>Products</a><span style={{ color: "#A39B8E", margin: "0 8px" }}>/</span><span style={{ color: "#1B1F2A" }}>NDev Slot Booking</span></div></div>
+<div style={{ background: "#F4EFE6", borderBottom: "1px solid #E7E0D5", padding: "12px 24px" }}>
+<div style={{ maxWidth: "1200px", margin: "0 auto", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "12px" }}>
+<div style={{ fontSize: "14px" }}><a href="/products" style={{ color: "#4A5160", textDecoration: "none" }}>Products</a><span style={{ color: "#A39B8E", margin: "0 8px" }}>/</span><span style={{ color: "#1B1F2A" }}>NDev Slot Booking</span></div>
+<nav aria-label="Product" style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}><a href="/products/slot-booking" aria-current="page" style={{ display: "inline-flex", alignItems: "center", minHeight: "40px", padding: "0 14px", borderRadius: "8px", background: "#FFFFFF", border: "1px solid #E7E0D5", color: "#1B1F2A", textDecoration: "none", fontSize: "14px", fontWeight: "600" }}>Overview</a><a href="/products/slot-booking/docs" style={{ display: "inline-flex", alignItems: "center", minHeight: "40px", padding: "0 14px", borderRadius: "8px", color: "#4A5160", textDecoration: "none", fontSize: "14px", fontWeight: "500" }}>Documentation</a><a href="/products/slot-booking/support" style={{ display: "inline-flex", alignItems: "center", minHeight: "40px", padding: "0 14px", borderRadius: "8px", color: "#4A5160", textDecoration: "none", fontSize: "14px", fontWeight: "500" }}>Support</a></nav>
+</div>
+</div>
 
 
 <section id="slot-booking" style={{ padding: "72px 24px 88px" }}>
@@ -30,7 +35,7 @@ export function ProductSlotBookingPage() {
 <p style={{ fontSize: "17px", lineHeight: "1.7", color: "#4A5160", margin: "0 0 32px" }}>No account to create, no monthly fee to a booking platform. The bookings stay in your WordPress.</p>
 <div style={{ display: "flex", flexWrap: "wrap", gap: "12px", alignItems: "center" }}>
 <a href="#early-access" style={{ display: "inline-flex", alignItems: "center", background: "#F59E0B", color: "#1B1F2A", textDecoration: "none", fontWeight: "600", fontSize: "16px", padding: "0 28px", minHeight: "52px", borderRadius: "10px" }}>Request early access</a>
-<span style={{ fontSize: "14px", color: "#6B7180" }}>WordPress 6.0+ · PHP 7.4+</span>
+<span style={{ fontSize: "14px", color: "#6B7180" }}><a href="/products/slot-booking/docs" style={{ color: "#4A5160" }}>Read the documentation</a> · WordPress 6.0+ · PHP 7.4+</span>
 </div>
 </div>
 <div style={{ flex: "1 1 560px", minWidth: "0" }}>
