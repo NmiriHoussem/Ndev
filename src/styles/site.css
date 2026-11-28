@@ -91,3 +91,13 @@ body {
 @media (max-width: 900px) {
   .nd-docs-toc { position: static !important; flex: 1 1 100% !important; }
 }
+
+/* Products hero image (public/products-scene.webp) */
+.nd-products-scene {
+  background-image: linear-gradient(90deg, rgba(244, 239, 230, 0.97) 0%, rgba(244, 239, 230, 0.9) 54%, rgba(244, 239, 230, 0) 78%), url('/products-scene.webp');
+}
+@media (max-width: 860px) {
+  .nd-products-scene {
+    background-image: linear-gradient(180deg, rgba(244, 239, 230, 0.92), rgba(244, 239, 230, 0.85)), url('/products-scene.webp');
+  }
+}

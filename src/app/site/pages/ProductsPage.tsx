@@ -12,7 +12,7 @@ export function ProductsPage() {
 <Nav active="products" />
 
 
-<section style={{ background: "#F4EFE6", padding: "88px 24px 80px" }}>
+<section className="nd-products-scene" style={{ backgroundColor: "#F4EFE6", backgroundSize: "cover", backgroundPosition: "center right", padding: "112px 24px 120px", borderBottom: "1px solid #E4DCCF" }}>
 <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
 <div style={{ fontSize: "14px", fontWeight: "600", color: "#B45309", marginBottom: "16px" }}>Products</div>
 <h1 style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: "500", fontSize: "clamp(34px, 4.03vw, 58px)", lineHeight: "1.06", letterSpacing: "-1.2px", color: "#1B1F2A", margin: "0 0 22px", maxWidth: "820px" }}>Creative apps and useful tools, built by NDev.</h1>
@@ -31,7 +31,6 @@ export function ProductsPage() {
 <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "10px", flex: "1" }}>
 <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
 <span style={{ fontSize: "12px", fontWeight: "500", color: "#4A5160", border: "1px solid #E7E0D5", borderRadius: "6px", padding: "4px 8px" }}>WordPress plugin</span>
-<span style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "12px", fontWeight: "500", color: "#92400E", background: "#FDF3E1", borderRadius: "6px", padding: "4px 8px" }}><span style={{ width: "6px", height: "6px", borderRadius: "3px", background: "#F59E0B" }}></span>Free · in review on WordPress.org</span>
 </div>
 <div style={{ display: "flex", alignItems: "center", gap: "12px", margin: "4px 0 0" }}><img src={psbIcon} alt="" width="40" height="40" style={{ display: "block", width: "40px", height: "40px", borderRadius: "9px", flex: "none" }} /><h2 style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: "500", fontSize: "26px", lineHeight: "1.2", color: "#1B1F2A", margin: "0" }}>NDev Slot Booking</h2></div>
 <p style={{ fontSize: "15px", lineHeight: "1.6", color: "#475569", margin: "0" }}>Time-slot booking for coworking spaces, studios, meeting rooms and equipment, right on your WordPress site. Templates by activity, online payment and a floating booking button.</p>
