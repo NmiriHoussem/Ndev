@@ -6,7 +6,7 @@ import { useContactForm, FormStatus } from '../contactForm';
 export function ProductSlotBookingSupportPage() {
   const form = useContactForm({ name: '', email: '', url: '', code: '', message: '' }, (v) => ({
     name: v.name, email: v.email, company: v.url || '', projectType: 'Support: NDev Slot Booking',
-    message: `Support request for NDev Slot Booking.\nWebsite: ${v.url || '(not provided)'}\nPurchase code: ${v.code || '(none)'}\n\n${v.message}`,
+    message: `Support request for NDev Slot Booking.\nWebsite: ${v.url || '(not provided)'}\nPlugin version: ${v.code || '(not provided)'}\n\n${v.message}`,
   }));
   return (
 <div className="nd-page" style={{ "--nd-link": "#B45309", "--nd-link-hover": "#92400E", fontFamily: "Inter, system-ui, sans-serif", color: "#0F172A", background: "#FFFFFF", width: "100%" }}>
@@ -36,7 +36,7 @@ export function ProductSlotBookingSupportPage() {
 <p style={{ fontSize: "15px", lineHeight: "1.6", color: "#475569", margin: "12px 0 0" }}>Need any of these? We do it as a paid service, <a href="/contact">ask us for a quote</a>.</p></div>
 <div style={{ border: "1px solid #E7E0D5", borderRadius: "12px", padding: "24px", background: "#FAF7F2" }}><h2 style={{ fontSize: "18px", fontWeight: "600", margin: "0 0 12px" }}>Before you write</h2>
 <p style={{ fontSize: "15px", lineHeight: "1.6", color: "#475569", margin: "0 0 10px" }}>Most answers are in the <a href="/products/slot-booking/docs">documentation</a>, and the <a href="/products/slot-booking/docs#faq">troubleshooting</a> section covers the common cases.</p>
-<p style={{ fontSize: "15px", lineHeight: "1.6", color: "#475569", margin: "0" }}>If you bought the plugin on a marketplace, include your purchase code.</p></div>
+<p style={{ fontSize: "15px", lineHeight: "1.6", color: "#475569", margin: "0" }}>Once the plugin is listed on WordPress.org, you can also ask in its support forum there.</p></div>
 </div>
 </section>
 
@@ -51,7 +51,7 @@ export function ProductSlotBookingSupportPage() {
 <label style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "13px", color: "#4A5160" }}>Full name<input type="text" name="name" required value={form.values.name} onChange={form.change} style={{ fontFamily: "inherit", fontSize: "15px", minHeight: "46px", padding: "0 14px", borderRadius: "8px", border: "1px solid #D6CEC2", background: "#FFFFFF", color: "#1B1F2A" }} /></label>
 <label style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "13px", color: "#4A5160" }}>Email<input type="email" name="email" required value={form.values.email} onChange={form.change} style={{ fontFamily: "inherit", fontSize: "15px", minHeight: "46px", padding: "0 14px", borderRadius: "8px", border: "1px solid #D6CEC2", background: "#FFFFFF", color: "#1B1F2A" }} /></label>
 <label style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "13px", color: "#4A5160" }}>Your website<input type="url" name="url" placeholder="https://" value={form.values.url} onChange={form.change} style={{ fontFamily: "inherit", fontSize: "15px", minHeight: "46px", padding: "0 14px", borderRadius: "8px", border: "1px solid #D6CEC2", background: "#FFFFFF", color: "#1B1F2A" }} /></label>
-<label style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "13px", color: "#4A5160" }}>Purchase code (optional)<input type="text" name="code" value={form.values.code} onChange={form.change} style={{ fontFamily: "inherit", fontSize: "15px", minHeight: "46px", padding: "0 14px", borderRadius: "8px", border: "1px solid #D6CEC2", background: "#FFFFFF", color: "#1B1F2A" }} /></label>
+<label style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "13px", color: "#4A5160" }}>Plugin version (optional)<input type="text" name="code" placeholder="1.2.1" value={form.values.code} onChange={form.change} style={{ fontFamily: "inherit", fontSize: "15px", minHeight: "46px", padding: "0 14px", borderRadius: "8px", border: "1px solid #D6CEC2", background: "#FFFFFF", color: "#1B1F2A" }} /></label>
 <label style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "13px", color: "#4A5160", gridColumn: "1 / -1" }}>What is happening?<textarea name="message" required minLength={10} value={form.values.message} onChange={form.change} rows={6} style={{ fontFamily: "inherit", fontSize: "15px", padding: "12px 14px", borderRadius: "8px", border: "1px solid #D6CEC2", background: "#FFFFFF", color: "#1B1F2A", resize: "vertical" }}></textarea></label>
 <button type="submit" disabled={form.sending} style={{ gridColumn: "1 / -1", fontFamily: "inherit", fontSize: "15px", fontWeight: "600", minHeight: "50px", border: "none", borderRadius: "10px", background: "#F59E0B", color: "#1B1F2A", cursor: "pointer" }}>{form.sending ? 'Sending\u2026' : 'Send request'}</button>
 <FormStatus status={form.status} />

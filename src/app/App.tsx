@@ -96,13 +96,13 @@ function resolve(rawPath: string): Route | null {
         'Creative AI-augmented apps and useful tools designed and built by NDev Digital, including NDev Slot Booking.');
     case '/products/slot-booking/docs':
       return r(<ProductSlotBookingDocsPage />, 'NDev Slot Booking documentation | NDev Digital',
-        'Install and configure NDev Slot Booking: opening hours, offers, extras, wording, placing the form, managing bookings, calendar sync and emails.');
+        'Install and configure NDev Slot Booking: templates, spaces and places, offers, form fields, appearance, floating button, online payment, language, calendar sync and emails.');
     case '/products/slot-booking/support':
       return r(<ProductSlotBookingSupportPage />, 'NDev Slot Booking support | NDev Digital',
         'Get help with NDev Slot Booking: what support covers, response times and a form to open a support request.');
     case '/products/slot-booking':
       return r(<ProductSlotBookingPage />, 'NDev Slot Booking: time-slot booking for WordPress | NDev Digital',
-        'Let visitors book a coworking desk, a meeting room, a studio or equipment on your WordPress site. Offers, extras, approval and calendar sync.');
+        'Free WordPress plugin to let visitors book a coworking desk, a meeting room, a studio or equipment. Templates by activity, places per space, online payment and a floating booking button.');
     case '/academy':
       return r(<AcademyPage />, 'Sprint Academy | Product, Scrum, UX, QA, cybersecurity and AI trainings',
         'NDev Sprint Academy trains teams and professionals in product management, product ownership, Scrum, UX in Scrum teams, QA, cybersecurity and AI engineering.');
