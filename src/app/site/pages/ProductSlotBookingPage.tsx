@@ -34,7 +34,6 @@ export function ProductSlotBookingPage() {
 <div style={{ flex: "1 1 420px", minWidth: "0" }}>
 <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "20px" }}>
 <span style={{ display: "inline-flex", alignItems: "center", fontSize: "13px", fontWeight: "500", color: "#4A5160", border: "1px solid #E7E0D5", borderRadius: "6px", padding: "5px 10px" }}>WordPress plugin</span>
-<span style={{ display: "inline-flex", alignItems: "center", gap: "8px", fontSize: "13px", fontWeight: "500", color: "#92400E", background: "#FDF3E1", borderRadius: "6px", padding: "5px 10px" }}><span style={{ width: "6px", height: "6px", borderRadius: "3px", background: "#F59E0B" }}></span>Free · in review on WordPress.org</span>
 </div>
 <div style={{ display: "flex", alignItems: "center", gap: "18px", margin: "0 0 18px" }}><img src={psbIcon} alt="" width="64" height="64" style={{ display: "block", width: "64px", height: "64px", borderRadius: "14px", flex: "none" }} /><h1 style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: "500", fontSize: "clamp(30px, 3.61vw, 52px)", lineHeight: "1.08", letterSpacing: "-1px", color: "#1B1F2A", margin: "0" }}>NDev Slot Booking</h1></div>
 <p style={{ fontSize: "17px", lineHeight: "1.7", color: "#4A5160", margin: "0 0 16px" }}>Let your visitors book a desk, a room, a studio or a piece of equipment by the hour or the day, right on your WordPress site. Pick a template for your activity, set your prices, and take bookings with or without online payment.</p>
